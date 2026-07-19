@@ -12,22 +12,22 @@ const Button = ({
   onClick,
   type = "button",
 }) => {
-    const baseClasses =
-      "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 px-6 py-3";
+  const baseClasses =
+    "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 px-6 py-3";
 
-    const variants = {
-      primary:
-        "bg-[var(--color-primary)] text-white hover:bg-indigo-600 shadow-lg hover:shadow-indigo-500/30",
+  const variants = {
+    primary:
+      "bg-[var(--color-primary)] text-white hover:bg-indigo-600 shadow-lg hover:shadow-indigo-500/30",
 
-      secondary: "bg-[var(--color-secondary)] text-white hover:bg-violet-600",
+    secondary: "bg-[var(--color-secondary)] text-white hover:bg-violet-600",
 
-      outline:
-        "border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white",
+    outline:
+      "border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white",
 
-      ghost: "bg-transparent text-white hover:bg-white/10",
+    ghost: "bg-transparent text-white hover:bg-white/10",
 
-      danger: "bg-red-500 text-white hover:bg-red-600",
-    };
+    danger: "bg-red-500 text-white hover:bg-red-600",
+  };
 
   const sizes = {
     sm: "px-4 py-2 text-sm",
