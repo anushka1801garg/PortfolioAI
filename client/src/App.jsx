@@ -1,18 +1,28 @@
 import Container from "./components/ui/Container/Container";
+import { Heading, Text } from "./components/ui/Typography/Typography";
+import Button from "./components/ui/Button/Button";
 
 function App() {
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
       <Container>
         <div className="py-32">
-          <h1 className="text-6xl font-bold">
+          <Heading>
             Welcome to{" "}
             <span className="text-[var(--color-primary)]">PortfolioAI</span>
-          </h1>
+          </Heading>
 
-          <p className="text-[var(--color-muted)] mt-6 text-xl max-w-xl">
+          <Text className="mt-6 max-w-xl">
             AI-powered portfolio builder and analyzer.
-          </p>
+          </Text>
+
+          <div className="flex gap-4 mt-10">
+            <Button>Generate Portfolio</Button>
+
+            <Button variant="outline">Learn More</Button>
+
+            <Button variant="danger">Delete</Button>
+          </div>
         </div>
       </Container>
     </main>
