@@ -1,48 +1,31 @@
-*{
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  body {
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+    background: #0B0E17;
+    color: #FAFAFA;
+  }
 
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Sora", sans-serif;
+  }
 
-html{
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-    scroll-behavior:smooth;
+  button {
+    cursor: pointer;
+  }
 
-}
-
-body{
-
-    font-family:"Inter",sans-serif;
-
-    overflow-x:hidden;
-
-}
-
-h1,h2,h3,h4,h5,h6{
-
-    font-family:"Sora",sans-serif;
-
-}
-
-a{
-
-    text-decoration:none;
-    color:inherit;
-
-}
-
-button{
-
-    cursor:pointer;
-    border:none;
-
-}
-
-img{
-
-    width:100%;
-    display:block;
-
-}
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}

@@ -1,0 +1,140 @@
+/* PortfolioAI Custom Cursor Styles */
+
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor body,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor [role="button"],
+  html.has-custom-cursor .cursor-pointer,
+  html.has-custom-cursor input[type="submit"],
+  html.has-custom-cursor input[type="button"],
+  html.has-custom-cursor label {
+    cursor: none !important;
+  }
+
+  html.has-custom-cursor input:not([type="submit"]):not([type="button"]),
+  html.has-custom-cursor textarea {
+    cursor: text;
+  }
+}
+
+.custom-cursor-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999999;
+  overflow: hidden;
+  contain: layout style size;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #06b6d4, #6366f1, #a855f7);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.8), 0 0 4px rgba(6, 182, 212, 0.9);
+  pointer-events: none;
+  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+  transition: opacity 0.15s ease, transform 0.05s ease;
+  will-change: transform;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(99, 102, 241, 0.5);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+  pointer-events: none;
+  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              height 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.25s ease,
+              background-color 0.25s ease,
+              box-shadow 0.25s ease,
+              opacity 0.2s ease,
+              border-radius 0.25s ease;
+  will-change: transform, width, height;
+}
+
+/* Hovering interactive elements */
+.custom-cursor-ring.cursor-hover {
+  width: 54px;
+  height: 54px;
+  border-color: rgba(6, 182, 212, 0.85);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(99, 102, 241, 0.1) 70%);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), 0 0 35px rgba(99, 102, 241, 0.2);
+}
+
+.custom-cursor-dot.cursor-hover {
+  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%) scale(0.6);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 1);
+}
+
+/* Active / Mousedown click */
+.custom-cursor-ring.cursor-active {
+  width: 28px;
+  height: 28px;
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.6);
+}
+
+.custom-cursor-dot.cursor-active {
+  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%) scale(1.4);
+}
+
+/* Text / Input hover */
+.custom-cursor-ring.cursor-text {
+  width: 4px;
+  height: 24px;
+  border-radius: 2px;
+  border-color: #06b6d4;
+  background: #06b6d4;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+  opacity: 0.6;
+}
+
+.custom-cursor-dot.cursor-text {
+  opacity: 0;
+}
+
+/* Click Shockwave Ripple */
+.custom-cursor-ripple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(6, 182, 212, 0.8);
+  pointer-events: none;
+  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+  animation: cursorRipple 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes cursorRipple {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+    border-color: rgba(6, 182, 212, 0.9);
+  }
+  100% {
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+    border-color: rgba(168, 85, 247, 0);
+  }
+}

@@ -1,0 +1,28 @@
+# PortfolioAI Robots.txt
+# https://portfolioai.app
+
+User-agent: *
+Allow: /
+Allow: /templates
+Allow: /templates/*
+Allow: /p/*
+Allow: /portfolio-generator
+Allow: /analyzer
+Allow: /login
+Allow: /register
+
+# Disallow private user workspace and authenticated administration routes
+Disallow: /dashboard
+Disallow: /portfolio$
+Disallow: /portfolio/create
+Disallow: /portfolio/edit/
+Disallow: /settings
+Disallow: /chat
+Disallow: /chatbot
+Disallow: /payment/
+Disallow: /auth/
+Disallow: /api/
+
+# XML Sitemap
+Sitemap: https://portfolioai.app/sitemap.xml
+

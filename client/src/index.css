@@ -1,6 +1,622 @@
 @import "tailwindcss";
 
+/* Typography Fonts */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/sora/600.css";
+@import "@fontsource/sora/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
 @import "./styles/variables.css";
 @import "./styles/theme.css";
 @import "./styles/globals.css";
 @import "./styles/animations.css";
+@import "./styles/cursor.css";
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#0B0E17;
+    overflow-x:hidden;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+/* Luxury Editorial & Display Font Utilities */
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+.font-jakarta {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Awwwards & Figma Community Glassmorphic Panels */
+.glass-panel {
+  background: rgba(15, 17, 26, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%), rgba(13, 15, 24, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dynamic Interactive Elements */
+[data-project-tag] {
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+[data-project-tag]:hover {
+  transform: translateY(-1px);
+}
+[data-project-tag]:active {
+  transform: scale(0.96);
+}
+
+/* Markdown Chatbot Table & Rich Response Styling */
+.markdown-chat-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 520px;
+  font-size: 0.8125rem;
+}
+.markdown-chat-table th {
+  background: rgba(39, 39, 42, 0.95);
+  color: #a5b4fc;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.6875rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(63, 63, 70, 0.9);
+  border-right: 1px solid rgba(63, 63, 70, 0.5);
+  white-space: nowrap;
+}
+.markdown-chat-table th:last-child {
+  border-right: none;
+}
+.markdown-chat-table td {
+  padding: 0.75rem 1rem;
+  color: #d4d4d8;
+  border-bottom: 1px solid rgba(39, 39, 42, 0.7);
+  border-right: 1px solid rgba(39, 39, 42, 0.5);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.markdown-chat-table td:last-child {
+  border-right: none;
+}
+.markdown-chat-table tr:last-child td {
+  border-bottom: none;
+}
+.markdown-chat-table tr:hover td {
+  background: rgba(99, 102, 241, 0.07);
+}
+
+/* ===================================================
+   Mermaid Workflow Diagram Styling & Contrast Rules
+   =================================================== */
+.mermaid-svg-wrapper {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.mermaid-svg-wrapper svg {
+  max-width: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Force crisp, legible typography on nodes */
+.mermaid-svg-wrapper .node text,
+.mermaid-svg-wrapper .node tspan,
+.mermaid-svg-wrapper .node .label,
+.mermaid-svg-wrapper .node .nodeLabel,
+.mermaid-svg-wrapper .node span,
+.mermaid-svg-wrapper .node div,
+.mermaid-svg-wrapper .node p {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+}
+
+/* Light / pastel colored node boxes: FORCE high-contrast bold dark text */
+.mermaid-svg-wrapper .node[data-light-node="true"] text,
+.mermaid-svg-wrapper .node[data-light-node="true"] tspan,
+.mermaid-svg-wrapper .node[data-light-node="true"] .label,
+.mermaid-svg-wrapper .node[data-light-node="true"] .nodeLabel,
+.mermaid-svg-wrapper .node[data-light-node="true"] span,
+.mermaid-svg-wrapper .node[data-light-node="true"] div,
+.mermaid-svg-wrapper .node[data-light-node="true"] p,
+.mermaid-svg-wrapper .node.light-node text,
+.mermaid-svg-wrapper .node.light-node tspan,
+.mermaid-svg-wrapper .node.light-node .label,
+.mermaid-svg-wrapper .node.light-node .nodeLabel,
+.mermaid-svg-wrapper .node.light-node span,
+.mermaid-svg-wrapper .node.light-node div,
+.mermaid-svg-wrapper .node.light-node p,
+/* Instant CSS fallback for common pastel inline styles */
+.mermaid-svg-wrapper .node:has([style*="ffedd5" i]) text,
+.mermaid-svg-wrapper .node:has([style*="ffedd5" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="ffedd5" i]) span,
+.mermaid-svg-wrapper .node:has([style*="bae6fd" i]) text,
+.mermaid-svg-wrapper .node:has([style*="bae6fd" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="bae6fd" i]) span,
+.mermaid-svg-wrapper .node:has([style*="fef9c3" i]) text,
+.mermaid-svg-wrapper .node:has([style*="fef9c3" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="fef9c3" i]) span,
+.mermaid-svg-wrapper .node:has([style*="f3e8ff" i]) text,
+.mermaid-svg-wrapper .node:has([style*="f3e8ff" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="f3e8ff" i]) span,
+.mermaid-svg-wrapper .node:has([style*="fed7aa" i]) text,
+.mermaid-svg-wrapper .node:has([style*="fed7aa" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="fed7aa" i]) span,
+.mermaid-svg-wrapper .node:has([style*="dcfce7" i]) text,
+.mermaid-svg-wrapper .node:has([style*="dcfce7" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="dcfce7" i]) span,
+.mermaid-svg-wrapper .node:has([style*="fce7f3" i]) text,
+.mermaid-svg-wrapper .node:has([style*="fce7f3" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="fce7f3" i]) span,
+.mermaid-svg-wrapper .node:has([style*="e0e7ff" i]) text,
+.mermaid-svg-wrapper .node:has([style*="e0e7ff" i]) .nodeLabel,
+.mermaid-svg-wrapper .node:has([style*="e0e7ff" i]) span {
+  fill: #09090b !important;
+  color: #09090b !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #09090b !important;
+}
+
+/* Dark node boxes: High-contrast crisp white text */
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) text,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) tspan,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) .label,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) .nodeLabel,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) span,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) div,
+.mermaid-svg-wrapper .node:not([data-light-node="true"]):not(.light-node) p {
+  fill: #ffffff;
+  color: #ffffff;
+  font-weight: 600;
+  -webkit-text-fill-color: #ffffff;
+}
+
+/* Node boxes */
+.mermaid-svg-wrapper .node rect,
+.mermaid-svg-wrapper .node circle,
+.mermaid-svg-wrapper .node polygon {
+  stroke-width: 2px !important;
+}
+
+/* Force high-visibility pills on edge data labels */
+.mermaid-svg-wrapper .edgeLabel text,
+.mermaid-svg-wrapper .edgeLabel .label {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  fill: #e0e7ff !important;
+  color: #e0e7ff !important;
+}
+
+.mermaid-svg-wrapper .edgeLabel rect,
+.mermaid-svg-wrapper .edgeLabel span {
+  background: #09090b !important;
+  background-color: #09090b !important;
+  fill: #09090b !important;
+  stroke: #4f46e5 !important;
+  stroke-width: 1.5px !important;
+  border: 1px solid #4f46e5 !important;
+  border-radius: 6px !important;
+  padding: 3px 6px !important;
+  color: #e0e7ff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Directional Arrow line enhancements */
+.mermaid-svg-wrapper .flowchart-link {
+  stroke: #818cf8 !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid-svg-wrapper .marker {
+  fill: #818cf8 !important;
+  stroke: #818cf8 !important;
+}
+
+/* Markdown Code Blocks & Monospace formatting */
+.markdown-chat-body pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  overflow-x: auto !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0px !important;
+  font-feature-settings: "liga" 0 !important;
+}
+
+.markdown-chat-body pre::-webkit-scrollbar {
+  height: 6px;
+}
+.markdown-chat-body pre::-webkit-scrollbar-track {
+  background: #09090b;
+}
+.markdown-chat-body pre::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+.markdown-chat-body pre::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* ===================================================
+   Custom Scrollbar Utilities & Global Windows Dark Scrollbars
+   =================================================== */
+/* Hide scrollbars for containers with .no-scrollbar or .scrollbar-none */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;     /* Firefox */
+}
+
+/* Global sleek dark scrollbars across entire application (eliminates Windows bright white scrollbars) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #27272a #09090b;
+}
+
+/* Ensure Mermaid temporary render measurement containers on document.body are strictly off-screen and invisible */
+body > div[id^="dmermaid-svg-"],
+body > iframe[id^="imermaid-svg-"],
+div[id^="dmermaid-svg-"],
+iframe[id^="imermaid-svg-"] {
+  position: fixed !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  max-width: 1px !important;
+  max-height: 1px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  z-index: -9999 !important;
+}
+
+/* =========================================================================
+   Responsive Preview Device Simulation (Mobile: ~390px & Tablet: ~768px)
+   Enforces genuine mobile & tablet constraints inside preview frames,
+   overriding desktop media queries across all portfolio templates.
+   ========================================================================= */
+
+/* Mobile Frame Container */
+.preview-device-mobile {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  contain: paint;
+}
+
+.preview-device-mobile * {
+  box-sizing: border-box !important;
+}
+
+/* Force Flex Rows to Stacks on Mobile */
+.preview-device-mobile .md\:flex-row,
+.preview-device-mobile .lg\:flex-row,
+.preview-device-mobile .xl\:flex-row,
+.preview-device-mobile .sm\:flex-row {
+  flex-direction: column !important;
+}
+
+.preview-device-mobile .md\:items-start,
+.preview-device-mobile .lg\:items-start {
+  align-items: center !important;
+}
+
+.preview-device-mobile .md\:text-left,
+.preview-device-mobile .lg\:text-left {
+  text-align: center !important;
+}
+
+.preview-device-mobile .md\:justify-start,
+.preview-device-mobile .lg\:justify-start {
+  justify-content: center !important;
+}
+
+/* Grids: Force Single Column for cards and layouts on Mobile */
+.preview-device-mobile .grid-cols-12,
+.preview-device-mobile .grid-cols-6,
+.preview-device-mobile .grid-cols-5,
+.preview-device-mobile .grid-cols-4,
+.preview-device-mobile .grid-cols-3,
+.preview-device-mobile .sm\:grid-cols-2,
+.preview-device-mobile .sm\:grid-cols-3,
+.preview-device-mobile .sm\:grid-cols-4,
+.preview-device-mobile .md\:grid-cols-2,
+.preview-device-mobile .md\:grid-cols-3,
+.preview-device-mobile .md\:grid-cols-4,
+.preview-device-mobile .lg\:grid-cols-2,
+.preview-device-mobile .lg\:grid-cols-3,
+.preview-device-mobile .lg\:grid-cols-4,
+.preview-device-mobile .lg\:grid-cols-12 {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/* Allow small 2-col stats if explicit */
+.preview-device-mobile .stats-grid,
+.preview-device-mobile .grid-cols-2:not([class*="md:"]):not([class*="lg:"]) {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+/* Reset Column Spans to Full Width */
+.preview-device-mobile [class*="col-span-"],
+.preview-device-mobile [class*="sm\:col-span-"],
+.preview-device-mobile [class*="md\:col-span-"],
+.preview-device-mobile [class*="lg\:col-span-"] {
+  grid-column: span 1 / span 1 !important;
+}
+
+/* Typography Downscaling & Word-Wrap Safeguards */
+.preview-device-mobile h1,
+.preview-device-mobile .text-5xl,
+.preview-device-mobile .text-6xl,
+.preview-device-mobile .text-7xl,
+.preview-device-mobile .text-8xl,
+.preview-device-mobile .sm\:text-5xl,
+.preview-device-mobile .sm\:text-6xl,
+.preview-device-mobile .sm\:text-7xl,
+.preview-device-mobile .md\:text-5xl,
+.preview-device-mobile .md\:text-6xl,
+.preview-device-mobile .md\:text-7xl,
+.preview-device-mobile .lg\:text-7xl,
+.preview-device-mobile .lg\:text-8xl {
+  font-size: 1.75rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.02em !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.preview-device-mobile h2,
+.preview-device-mobile .text-3xl,
+.preview-device-mobile .text-4xl,
+.preview-device-mobile .sm\:text-3xl,
+.preview-device-mobile .sm\:text-4xl,
+.preview-device-mobile .md\:text-3xl,
+.preview-device-mobile .md\:text-4xl {
+  font-size: 1.35rem !important;
+  line-height: 1.25 !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.preview-device-mobile h3,
+.preview-device-mobile .text-2xl,
+.preview-device-mobile .sm\:text-2xl,
+.preview-device-mobile .md\:text-2xl {
+  font-size: 1.15rem !important;
+  line-height: 1.3 !important;
+  word-break: break-word !important;
+}
+
+.preview-device-mobile p,
+.preview-device-mobile span,
+.preview-device-mobile a,
+.preview-device-mobile div {
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.preview-device-mobile .inline-block {
+  max-width: 100% !important;
+  word-break: break-word !important;
+}
+
+/* Container Paddings: Compress desktop paddings to mobile scale */
+.preview-device-mobile main,
+.preview-device-mobile section,
+.preview-device-mobile [class*="p-8"],
+.preview-device-mobile [class*="p-10"],
+.preview-device-mobile [class*="p-12"],
+.preview-device-mobile [class*="p-14"],
+.preview-device-mobile [class*="p-16"],
+.preview-device-mobile [class*="sm\:p-1"],
+.preview-device-mobile [class*="md\:p-1"] {
+  padding: 1rem !important;
+}
+
+.preview-device-mobile [class*="px-6"],
+.preview-device-mobile [class*="px-8"],
+.preview-device-mobile [class*="px-10"],
+.preview-device-mobile [class*="px-12"],
+.preview-device-mobile [class*="px-14"],
+.preview-device-mobile [class*="sm\:px-"],
+.preview-device-mobile [class*="md\:px-"] {
+  padding-left: 0.875rem !important;
+  padding-right: 0.875rem !important;
+}
+
+.preview-device-mobile [class*="py-12"],
+.preview-device-mobile [class*="py-16"],
+.preview-device-mobile [class*="py-20"],
+.preview-device-mobile [class*="py-24"],
+.preview-device-mobile [class*="sm\:py-"] {
+  padding-top: 1.25rem !important;
+  padding-bottom: 1.25rem !important;
+}
+
+.preview-device-mobile [class*="gap-8"],
+.preview-device-mobile [class*="gap-10"],
+.preview-device-mobile [class*="gap-12"],
+.preview-device-mobile [class*="sm\:gap-"],
+.preview-device-mobile [class*="md\:gap-"] {
+  gap: 0.875rem !important;
+}
+
+.preview-device-mobile [class*="space-y-16"],
+.preview-device-mobile [class*="space-y-20"],
+.preview-device-mobile [class*="space-y-24"],
+.preview-device-mobile [class*="space-y-28"],
+.preview-device-mobile [class*="sm\:space-y-"] {
+  margin-top: 1.5rem !important;
+}
+
+/* Avatar Constraints on Mobile */
+.preview-device-mobile .w-32,
+.preview-device-mobile .w-40,
+.preview-device-mobile .h-32,
+.preview-device-mobile .h-40,
+.preview-device-mobile [class*="sm\:w-40"],
+.preview-device-mobile [class*="sm\:h-40"] {
+  width: 6.5rem !important;
+  height: 6.5rem !important;
+}
+
+/* Hide Desktop Navigation Menus in Mobile Preview */
+.preview-device-mobile nav.hidden,
+.preview-device-mobile .hidden.lg\:flex,
+.preview-device-mobile .hidden.md\:flex {
+  display: none !important;
+}
+
+/* Fixed Width & Min-Width Neutralization */
+.preview-device-mobile [class*="min-w-"] {
+  min-width: 0 !important;
+}
+
+.preview-device-mobile [class*="w-64"],
+.preview-device-mobile [class*="w-72"],
+.preview-device-mobile [class*="w-80"],
+.preview-device-mobile [class*="w-96"],
+.preview-device-mobile [class*="max-w-2xl"],
+.preview-device-mobile [class*="max-w-3xl"],
+.preview-device-mobile [class*="max-w-4xl"],
+.preview-device-mobile [class*="max-w-5xl"],
+.preview-device-mobile [class*="max-w-6xl"],
+.preview-device-mobile [class*="max-w-7xl"] {
+  max-width: 100% !important;
+}
+
+/* Prevent 3D Transforms / Tilt blowouts */
+.preview-device-mobile [style*="preserve-3d"] {
+  transform: none !important;
+  perspective: none !important;
+}
+
+.preview-device-mobile [style*="translateZ"] {
+  transform: none !important;
+}
+
+/* Mobile Centering of Action Buttons */
+.preview-device-mobile .flex.items-center.gap-3,
+.preview-device-mobile .flex.flex-wrap.items-center {
+  justify-content: center !important;
+}
+
+
+/* =========================================================================
+   Tablet Frame Simulation (.preview-device-tablet: ~768px)
+   ========================================================================= */
+
+.preview-device-tablet {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  contain: paint;
+}
+
+.preview-device-tablet * {
+  box-sizing: border-box !important;
+}
+
+.preview-device-tablet .lg\:grid-cols-12 {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.preview-device-tablet .lg\:col-span-8,
+.preview-device-tablet .lg\:col-span-4 {
+  grid-column: span 1 / span 1 !important;
+}
+
+.preview-device-tablet .lg\:grid-cols-4,
+.preview-device-tablet .lg\:grid-cols-3 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.preview-device-tablet h1,
+.preview-device-tablet .text-6xl,
+.preview-device-tablet .text-7xl,
+.preview-device-tablet .text-8xl,
+.preview-device-tablet .lg\:text-7xl,
+.preview-device-tablet .lg\:text-8xl {
+  font-size: 2.5rem !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.preview-device-tablet h2,
+.preview-device-tablet .text-4xl,
+.preview-device-tablet .lg\:text-4xl {
+  font-size: 1.85rem !important;
+  line-height: 1.25 !important;
+}
+
+.preview-device-tablet [class*="min-w-"] {
+  min-width: 0 !important;
+}
+
+.preview-device-tablet [class*="max-w-"] {
+  max-width: 100% !important;
+}
+
+.preview-device-tablet nav.hidden.lg\:flex {
+  display: none !important;
+}
+
+
+
+

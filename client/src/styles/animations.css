@@ -1,21 +1,113 @@
-@keyframes fadeIn{
-
-    from{
-
-        opacity:0;
-
-    }
-
-    to{
-
-        opacity:1;
-
-    }
-
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.fade-in{
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
 
-    animation:fadeIn .5s ease;
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+/* Interactive Chatbot Mascot Animations */
+@keyframes botFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes botPulseRing {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes botOrbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes botOrbitRev {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes eyeBlink {
+  0%, 92%, 100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes antennaPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #38bdf8) drop-shadow(0 0 6px #6366f1);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px #a855f7) drop-shadow(0 0 14px #ec4899);
+  }
+}
+
+.animate-bot-float {
+  animation: botFloat 3.6s ease-in-out infinite;
+}
+
+.animate-bot-pulse-ring {
+  animation: botPulseRing 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.animate-bot-orbit {
+  animation: botOrbit 8s linear infinite;
+}
+
+.animate-bot-orbit-rev {
+  animation: botOrbitRev 12s linear infinite;
+}
+
+.animate-eye-blink {
+  animation: eyeBlink 3.8s infinite;
+  transform-origin: center;
+}
+
+.animate-antenna-pulse {
+  animation: antennaPulse 2s ease-in-out infinite;
 }
