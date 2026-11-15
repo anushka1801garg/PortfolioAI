@@ -1,19 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
 import {
-  Globe,
   Mail,
   Phone,
   Briefcase,
   GraduationCap,
   Sparkles,
   ArrowUpRight,
-  Code2,
-  BookOpen,
   Copy,
   Check,
   ExternalLink,
   X,
-  TrendingUp,
   Camera,
   ShieldCheck,
   Building2,
@@ -27,9 +23,9 @@ import {
   MapPin,
   ChevronRight,
   FileText,
-} from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+} from 'lucide-react';
+import { FaLinkedin } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -43,14 +39,12 @@ import {
   InteractiveCursorFollower,
   KineticMarquee,
   DynamicSoundwaveVisualizer,
-  KineticWordReveal,
   FloatingBadge,
-  MagneticPill,
   NeuralMeshCanvas,
   ExperienceCredentialsBadges,
   DiffBox,
   DiffThemeBanner,
-} from "./motionComponents";
+} from './motionComponents';
 
 const ModernTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) => {
   const isMobile = previewDevice === "mobile" || portfolio?._previewDevice === "mobile";
@@ -64,10 +58,7 @@ const ModernTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) => {
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
-    github,
     linkedin,
-    website,
     email,
     phone,
     title,
@@ -103,7 +94,7 @@ const ModernTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) => {
           timeZoneName: "short",
         }).format(now);
         setCurrentTime(formatted);
-      } catch (err) {
+      } catch {
         setCurrentTime("Active Online");
       }
     };

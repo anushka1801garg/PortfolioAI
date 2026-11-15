@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Tilt from "react-parallax-tilt";
 import {
   Sparkles,
   ArrowRight,
-  Terminal,
   CheckCircle2,
   ExternalLink,
   Zap,
@@ -16,12 +15,11 @@ import {
   Copy,
   Check,
   Globe,
-} from "lucide-react";
+} from 'lucide-react';
 import Container from "../../../../components/ui/Container/Container";
 import Section from "../../../../components/ui/Section/Section";
 
 const CTA = () => {
-  const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [copied, setCopied] = useState(false);
 

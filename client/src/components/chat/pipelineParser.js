@@ -17,7 +17,7 @@ export function isArchitecturePipeline(text) {
     // Common tier / layer keywords
     const hasLayers = /layer|tier|gateway|microservice|frontend|backend|persistence|database/i.test(s);
     // Directional arrows
-    const hasArrows = /[▼▲►◄➔→]|-->|--\>|\|\s*v\s*\|/i.test(s);
+    const hasArrows = /[▼▲►◄➔→]|-->|-->|\|\s*v\s*\|/i.test(s);
     // Bracketed numbers like [1. Client] or [Tier 1]
     const hasBracketedTiers = /\[\s*(?:\d+|tier|layer)[^\]]+\]/i.test(s);
 
@@ -26,7 +26,7 @@ export function isArchitecturePipeline(text) {
     if ((s.match(/(?:USER INTERACTION|API GATEWAY|MICROSERVICE|PERSISTENCE|DATABASE)\s*(?:LAYER)?/gi) || []).length >= 2) return true;
 
     return false;
-  } catch (_) {
+  } catch {
     return false;
   }
 }
@@ -229,8 +229,8 @@ function processBoxContent(lines, layerIndex) {
       if (!cleaned || cleaned === title || /^[┌┐└┘│─┼┴┬├┤\s]+$/.test(l)) continue;
 
       // Bullet points
-      if (/^[•\-\*]\s*(.+)/.test(cleaned)) {
-        layer.bullets.push(cleaned.replace(/^[•\-\*]\s*/, "").trim());
+      if (/^[•\-*]\s*(.+)/.test(cleaned)) {
+        layer.bullets.push(cleaned.replace(/^[•\-*]\s*/, "").trim());
         continue;
       }
 
@@ -274,7 +274,7 @@ function parseBracketedPipeline(rawLines) {
     const line = rawLines[i].trim();
     if (!line) continue;
 
-    const isBracketed = /^\[\s*(?:\d+[\.\:]?\s*)?([^\]]+)\]$/.test(line);
+    const isBracketed = /^\[\s*(?:\d+[.:]?\s*)?([^\]]+)\]$/.test(line);
 
     if (isBracketed) {
       if (currentLayer && currentConnector) {
@@ -282,7 +282,7 @@ function parseBracketedPipeline(rawLines) {
         currentConnector = null;
       }
 
-      const match = line.match(/^\[\s*(?:\d+[\.\:]?\s*)?([^\]]+)\]$/);
+      const match = line.match(/^\[\s*(?:\d+[.:]?\s*)?([^\]]+)\]$/);
       const title = match ? match[1].trim() : line;
 
       const low = title.toLowerCase();
@@ -313,8 +313,8 @@ function parseBracketedPipeline(rawLines) {
         } else if (cleaned) {
           currentConnector.label = currentConnector.label ? `${currentConnector.label} • ${cleaned}` : cleaned;
         }
-      } else if (/^[•\-\*]\s*(.+)/.test(line)) {
-        currentLayer.bullets.push(line.replace(/^[•\-\*]\s*/, "").trim());
+      } else if (/^[•\-*]\s*(.+)/.test(line)) {
+        currentLayer.bullets.push(line.replace(/^[•\-*]\s*/, "").trim());
       } else {
         currentLayer.bullets.push(line);
       }

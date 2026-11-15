@@ -540,7 +540,7 @@ export const DocumentViewerModal = ({
           u8arr[n] = bstr.charCodeAt(n);
         }
         return URL.createObjectURL(new Blob([u8arr], { type: mime }));
-      } catch (e) {
+      } catch {
         return doc.url;
       }
     }

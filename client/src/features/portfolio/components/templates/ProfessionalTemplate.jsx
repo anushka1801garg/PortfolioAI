@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 import {
   Mail,
   Phone,
@@ -13,23 +13,19 @@ import {
   Cpu,
   Copy,
   Check,
-  ShieldCheck,
   SlidersHorizontal,
   Camera,
-  Sparkles,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
   TiltCard,
   SpotlightCard,
-  ScrollReveal,
   PulseAura,
-  MagneticButton,
   MagneticPill,
   ProjectDeepDiveModal,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const ProfessionalTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const [inspectedProject, setInspectedProject] = useState(null);

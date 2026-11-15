@@ -2,20 +2,18 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { 
-  Edit3, 
-  Trash2, 
-  Share2, 
-  Globe, 
-  Lock, 
-  ExternalLink, 
-  Check, 
-  Sparkles, 
-  Eye, 
-  Layers,
+import {
+  Edit3,
+  Trash2,
+  Share2,
+  Globe,
+  Lock,
+  Check,
+  Sparkles,
+  Eye,
   Clock,
-  ArrowUpRight
-} from "lucide-react";
+  ArrowUpRight,
+} from 'lucide-react';
 
 import { deletePortfolio } from "../../../redux/portfolio/portfolioSlice";
 

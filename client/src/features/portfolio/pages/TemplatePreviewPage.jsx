@@ -2,17 +2,14 @@ import { useState, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
-  Sparkles,
   ArrowLeft,
-  ArrowRight,
   Check,
   Crown,
   Monitor,
   Tablet,
   Smartphone,
   Layers,
-  ExternalLink,
-} from "lucide-react";
+} from 'lucide-react';
 import TemplateRenderer from "../components/templates/TemplateRenderer";
 import { TEMPLATES } from "../components/templates/templateList";
 import { SAMPLE_PORTFOLIO_DATA } from "../components/templates/demoPortfolioData";
@@ -39,7 +36,9 @@ const TemplatePreviewPage = () => {
     try {
       const saved = sessionStorage.getItem("portfolioai_preview_data");
       if (saved) return JSON.parse(saved);
-    } catch (_) {}
+    } catch {
+      // Ignore sessionStorage / JSON parse errors
+    }
     return null;
   }, []);
 

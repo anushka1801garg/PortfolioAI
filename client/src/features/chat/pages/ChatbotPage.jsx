@@ -418,10 +418,31 @@ const createFreshSession = (userName, initialUrl = "") => ({
   updatedAt: new Date().toISOString(),
 });
 
+const createWidgetHandoffSession = (wm, wLink, wp, handoffId) => {
+  const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const normalized = wm.map((m, idx) => ({
+    id: m.id || `widget_${Date.now()}_${idx}`,
+    role: m.role,
+    timestamp: m.timestamp || nowTime,
+    content: m.content,
+  }));
+  const firstUserText = normalized.find((m) => m.role === "user")?.content || "";
+  return {
+    sessionId: `chat_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    title: generateSmartTitle(firstUserText, wLink, wp),
+    activeLink: wLink,
+    portfolioData: wp,
+    messages: normalized,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    _fromWidgetHandoffId: handoffId,
+  };
+};
+
 const ChatbotPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const initialUrl = searchParams.get("url") || searchParams.get("link") || "";
   const initialId = searchParams.get("id") || searchParams.get("portfolioId") || "";
   const prevLocationKeyRef = useRef(location.key);
@@ -454,24 +475,7 @@ const ChatbotPage = () => {
         (wp?._id ? `${window.location.origin}/portfolio/${wp._id}` : "");
 
       if (wm && wm.some((m) => m.role === "user")) {
-        const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        const normalized = wm.map((m, idx) => ({
-          id: m.id || `widget_${Date.now()}_${idx}`,
-          role: m.role,
-          timestamp: m.timestamp || nowTime,
-          content: m.content,
-        }));
-        const firstUserText = normalized.find((m) => m.role === "user")?.content || "";
-        const handoffSession = {
-          sessionId: `chat_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-          title: generateSmartTitle(firstUserText, wLink, wp),
-          activeLink: wLink,
-          portfolioData: wp,
-          messages: normalized,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          _fromWidgetHandoffId: handoffId,
-        };
+        const handoffSession = createWidgetHandoffSession(wm, wLink, wp, handoffId);
         return { fresh: handoffSession, initialList: [handoffSession, ...pastChats] };
       }
 
@@ -490,7 +494,7 @@ const ChatbotPage = () => {
     const fresh = existingEmpty || createFreshSession(userName, initialUrl);
     const initialList = [fresh, ...pastChats];
     return { fresh, initialList };
-  }, [currentUser?._id]);
+  }, [currentUser?._id, initialUrl, location.state, userName]);
 
   const [sessions, setSessions] = useState(() => initialSetup.initialList);
   const [currentSessionId, setCurrentSessionId] = useState(() => initialSetup.fresh.sessionId);
@@ -502,7 +506,6 @@ const ChatbotPage = () => {
   // Active Chat State: starts on the fresh or widget-enlarged session
   const [activeLink, setActiveLink] = useState(() => initialSetup.fresh.activeLink || initialUrl || "");
   const [activePortfolioData, setActivePortfolioData] = useState(() => initialSetup.fresh.portfolioData || null);
-  const [pendingQuestion, setPendingQuestion] = useState(null);
   const [sidebarLinkInput, setSidebarLinkInput] = useState("");
   const [messages, setMessages] = useState(() => initialSetup.fresh.messages);
   const [input, setInput] = useState("");
@@ -511,15 +514,29 @@ const ChatbotPage = () => {
   const [selectedPromptCategory, setSelectedPromptCategory] = useState("all");
   const messagesEndRef = useRef(null);
   const autoSentRef = useRef(false);
+  const currentSessionIdRef = useRef(currentSessionId);
+  const sessionsRef = useRef(sessions);
+  const activeLinkRef = useRef(activeLink);
+  const activePortfolioDataRef = useRef(activePortfolioData);
+  const handleSendRef = useRef();
+  const handleNewChatRef = useRef();
 
   // Persist widget handoff session and mark consumed so refreshes don't duplicate it
   useEffect(() => {
     const handoffId = initialSetup.fresh?._fromWidgetHandoffId;
     if (handoffId) {
       sessionStorage.setItem("portfolio_chat_consumed_handoff", String(handoffId));
-      const { _fromWidgetHandoffId, ...cleanSession } = initialSetup.fresh;
+      const cleanSession = { ...initialSetup.fresh };
+      delete cleanSession._fromWidgetHandoffId;
       if (cleanSession.messages?.some((m) => m.role === "user")) {
-        saveLocalSessions(currentUser?._id, initialSetup.initialList.map(({ _fromWidgetHandoffId: _, ...s }) => s));
+        saveLocalSessions(
+          currentUser?._id,
+          initialSetup.initialList.map((s) => {
+            const copy = { ...s };
+            delete copy._fromWidgetHandoffId;
+            return copy;
+          })
+        );
         saveChatSession(cleanSession).catch(() => {});
       }
     }
@@ -537,7 +554,7 @@ const ChatbotPage = () => {
         if (res.data?.success && Array.isArray(res.data.sessions) && res.data.sessions.length > 0) {
           const remoteSessions = res.data.sessions;
           setSessions((prev) => {
-            const currentActive = prev.find((s) => s.sessionId === currentSessionId);
+            const currentActive = prev.find((s) => s.sessionId === currentSessionIdRef.current);
             const combined = currentActive ? [currentActive] : [];
             remoteSessions.forEach((r) => {
               if (!combined.some((c) => c.sessionId === r.sessionId)) {
@@ -569,7 +586,7 @@ const ChatbotPage = () => {
     const local = loadLocalSessions(currentUser?._id);
     if (local.length > 0) {
       setSessions((prev) => {
-        const currentActive = prev.find((s) => s.sessionId === currentSessionId);
+        const currentActive = prev.find((s) => s.sessionId === currentSessionIdRef.current);
         const past = local.filter((s) => s.messages?.some((m) => m.role === "user"));
         const merged = currentActive ? [currentActive] : [];
         past.forEach((p) => {
@@ -588,27 +605,27 @@ const ChatbotPage = () => {
     if (autoSentRef.current) return;
 
     // If the active session already contains user conversation, do not re-send
-    const active = sessions.find((s) => s.sessionId === currentSessionId);
+    const active = sessionsRef.current.find((s) => s.sessionId === currentSessionIdRef.current);
     if (active && Array.isArray(active.messages) && active.messages.length > 1) {
       autoSentRef.current = true;
       return;
     }
 
-    if (initialId && !activePortfolioData && portfolios.length > 0) {
+    if (initialId && !activePortfolioDataRef.current && portfolios.length > 0) {
       const match = portfolios.find((p) => p._id === initialId);
       if (match) {
         autoSentRef.current = true;
         const link =
           match.deployedUrl || `${window.location.origin}/portfolio/${match._id}`;
         setActiveLink(link);
-        handleSend(link);
+        handleSendRef.current?.(link);
       }
-    } else if (initialUrl && !activeLink) {
+    } else if (initialUrl && !activeLinkRef.current) {
       autoSentRef.current = true;
       setActiveLink(initialUrl);
-      handleSend(initialUrl);
+      handleSendRef.current?.(initialUrl);
     }
-  }, [initialId, initialUrl, portfolios, currentSessionId, sessions]);
+  }, [initialId, initialUrl, portfolios]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -684,7 +701,6 @@ const ChatbotPage = () => {
       setMessages([buildWelcomeMessage(userName, "")]);
       setActiveLink("");
       setActivePortfolioData(null);
-      setPendingQuestion(null);
       setInput("");
       toast.success("Started new chat session");
       return;
@@ -713,7 +729,6 @@ const ChatbotPage = () => {
     setMessages(newSession.messages);
     setActiveLink("");
     setActivePortfolioData(null);
-    setPendingQuestion(null);
     setInput("");
     toast.success("Started new chat session");
   };
@@ -724,10 +739,10 @@ const ChatbotPage = () => {
     if (prevLocationKeyRef.current !== location.key) {
       prevLocationKeyRef.current = location.key;
       if (location.state?.fromWidget) return;
-      const active = sessions.find((s) => s.sessionId === currentSessionId);
+      const active = sessionsRef.current.find((s) => s.sessionId === currentSessionIdRef.current);
       const hasUserMessages = active?.messages?.some((m) => m.role === "user");
       if (hasUserMessages) {
-        handleNewChat();
+        handleNewChatRef.current?.();
       }
     }
   }, [location.key, location.state]);
@@ -740,7 +755,6 @@ const ChatbotPage = () => {
     setMessages(session.messages && session.messages.length > 0 ? session.messages : [buildWelcomeMessage(userName, session.activeLink, session.portfolioData)]);
     setActiveLink(session.activeLink || "");
     setActivePortfolioData(session.portfolioData || null);
-    setPendingQuestion(null);
   };
 
   // Delete a chat session
@@ -884,8 +898,6 @@ const ChatbotPage = () => {
         toast.success(`Connected GitHub: ${res.data.githubRepo.fullName}!`);
       }
 
-      setPendingQuestion(null);
-
       const replyContent =
         res.data?.reply ||
         "I analyzed your portfolio query. Focus on quantified metrics ($ saved, % speedup) and high-demand keywords matching your target role.";
@@ -915,10 +927,18 @@ const ChatbotPage = () => {
     }
   };
 
+  useEffect(() => {
+    currentSessionIdRef.current = currentSessionId;
+    sessionsRef.current = sessions;
+    activeLinkRef.current = activeLink;
+    activePortfolioDataRef.current = activePortfolioData;
+    handleNewChatRef.current = handleNewChat;
+    handleSendRef.current = handleSend;
+  });
+
   const handleResetLink = () => {
     setActiveLink("");
     setActivePortfolioData(null);
-    setPendingQuestion(null);
     const resetMsg = {
       id: Date.now().toString(),
       role: "assistant",

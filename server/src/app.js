@@ -1,8 +1,10 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { configureQueryParser, sanitizeInput } from "./middlewares/sanitizer.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import portfolioRoutes from "./routes/portfolio.routes.js";
@@ -15,6 +17,8 @@ import fs from "fs";
 import paymentRoutes from "./routes/payment.routes.js";
 import deploymentRoutes from "./routes/deployment.routes.js";
 import Portfolio from "./models/portfolio.model.js";
+import { globalLimiter } from "./middlewares/rateLimiter.middleware.js";
+import { handleSocialCrawlerPreview } from "./controllers/seo.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +31,12 @@ const clientDistPath = clientDistCandidates.find((p) => fs.existsSync(p));
 
 const app = express();
 app.disable("etag");
+
+// Configure Express 5 query parser to sanitize query parameters at parse time
+configureQueryParser(app);
+
+// Trust reverse proxy (e.g. Render, Railway, Nginx) for accurate client IP identification
+app.set("trust proxy", 1);
 
 // Attach baseline HTTP security headers
 app.use(
@@ -45,11 +55,16 @@ const configuredClientUrls = (process.env.CLIENT_URL || "")
   .map((url) => url.trim().replace(/\/+$/, ""))
   .filter(Boolean);
 
+// Restrict localhost / local testing origins to non-production environments
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "http://127.0.0.1:5173",
-  "http://127.0.0.1:3000",
+  ...(process.env.NODE_ENV !== "production"
+    ? [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:3000",
+    ]
+    : []),
   ...configuredClientUrls,
 ].filter(Boolean);
 
@@ -70,12 +85,15 @@ app.use(
         return callback(null, true);
       }
 
-      // In development mode, permit local network inspection
+      // In development mode only, permit local loopback inspection
       if (process.env.NODE_ENV !== "production") {
-        return callback(null, true);
+        if (/^https?:\/\/localhost:\d+$/.test(origin) || /^https?:\/\/127\.0\.0\.1:\d+$/.test(origin)) {
+          return callback(null, true);
+        }
       }
 
-      return callback(new Error(`CORS request blocked from unauthorized origin: ${origin}`));
+      // Reject untrusted origin cleanly by omitting Access-Control-Allow-Origin header
+      return callback(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -97,6 +115,26 @@ app.use(
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 app.use(cookieParser());
+
+// Sanitize user-supplied input to prevent MongoDB Operator Injection ($ne, $gt, etc.)
+// Express 5 compatible sanitization across body, params, and query
+app.use(sanitizeInput);
+
+// Mount Global API Rate Limiter
+app.use("/api", globalLimiter);
+
+// Health Check Endpoints (OPS-02)
+const healthCheckHandler = (req, res) => {
+  return res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+  });
+};
+
+app.get("/health", healthCheckHandler);
+app.get("/api/v1/health", healthCheckHandler);
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
@@ -199,6 +237,11 @@ Sitemap: ${clientUrl}/sitemap.xml
   res.header("Content-Type", "text/plain");
   return res.status(200).send(robotsTxt);
 });
+
+// Dynamic Social Media Previews for Public Portfolios (SEO-01)
+// Intercepts social crawlers (WhatsApp, Facebook, Twitter, LinkedIn, Slack, Telegram)
+// and returns dynamic OG metadata, while passing human visitors through to the SPA
+app.get("/p/:id", handleSocialCrawlerPreview);
 
 // Production Static Serving for Single-Host Deployments (e.g. Render / Railway full-stack)
 if (clientDistPath) {

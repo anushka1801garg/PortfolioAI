@@ -14,10 +14,8 @@ import {
   Server,
   Zap,
   Boxes,
-  Lock,
-} from "lucide-react";
+} from 'lucide-react';
 import { isArchitecturePipeline, parseArchitecturePipeline } from "./pipelineParser";
-export { isArchitecturePipeline, parseArchitecturePipeline };
 
 /**
  * Styling themes for layer cards based on role

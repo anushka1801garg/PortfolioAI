@@ -1,33 +1,22 @@
 import { useState, useMemo } from "react";
 import {
   Shield,
-  Building2,
   Briefcase,
-  ExternalLink,
   Mail,
   Award,
   ShieldCheck,
   GraduationCap,
-  BookOpen,
-  TrendingUp,
-  CheckCircle2,
-  FileCheck,
   Phone,
-  Globe,
   ArrowUpRight,
   Camera,
   Check,
-  Copy,
   Layers,
   Zap,
-  Clock,
-  Calendar,
   ChevronRight,
-  MapPin,
   Sparkles,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -52,15 +41,12 @@ const CorporateTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
-    website = contact?.website,
     email = contact?.email || portfolio?.email,
     phone = contact?.phone || portfolio?.phone,
     title,
-    location: rawLocation,
   } = portfolio || {};
 
   const avatar = portfolio?.avatar || portfolio?.hero?.avatar || "";

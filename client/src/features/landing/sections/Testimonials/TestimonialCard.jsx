@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Quote, CheckCircle2, TrendingUp, Sparkles, Building2 } from "lucide-react";
+import { Star, Quote, CheckCircle2, Sparkles, Building2 } from 'lucide-react';
 
 const TestimonialCard = ({
   name,

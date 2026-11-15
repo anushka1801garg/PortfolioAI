@@ -2,26 +2,21 @@ import { useState } from "react";
 import {
   Globe,
   Mail,
-  Phone,
-  ExternalLink,
   Code2,
   Terminal,
   Zap,
   Award,
-  ShieldCheck,
   BookOpen,
   ArrowUpRight,
   Sparkles,
-  Music,
   Radio,
   Sliders,
   Camera,
   Layers,
   Check,
-  Copy,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -33,17 +28,14 @@ import {
   HoloBadge,
   PulseAura,
   ScrollReveal,
-  StaggerContainer,
-  StaggerItem,
   ProjectDeepDiveModal,
   Perspective3DCard,
   InteractiveCursorFollower,
   KineticMarquee,
   DynamicSoundwaveVisualizer,
-  KineticWordReveal,
   BioluminescentOrbsCanvas,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const NEON_PALETTES = {
   CYAN: {
@@ -79,13 +71,10 @@ const CreativeTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
-    blog = [],
     github,
     linkedin,
     website,
     email,
-    phone,
     title,
   } = portfolio || {};
 

@@ -14,20 +14,17 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  ArrowRight,
   ShieldCheck,
   Trash2,
   ExternalLink,
   Camera,
   Upload,
-  Image as ImageIcon,
   FileText,
-  FileCheck,
   MapPin,
   Building2,
   DollarSign,
   Eye,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -290,7 +287,7 @@ const MissingInfoPrompt = ({
         toast.error("Failed to read resume file");
       };
       reader.readAsDataURL(file);
-    } catch (err) {
+    } catch {
       toast.dismiss("resUpload");
       const reader = new FileReader();
       reader.onload = (event) => {

@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import {
   LayoutDashboard,
   Briefcase,
-  User,
   Settings,
   Sparkles,
   LogOut,
@@ -12,8 +11,7 @@ import {
   ArrowUpRight,
   ShieldCheck,
   Bot,
-  MessageSquare,
-} from "lucide-react";
+} from 'lucide-react';
 import { logout } from "../../../redux/auth/authSlice";
 import { clearGeneratedPortfolio } from "../../../redux/portfolioGenerator/portfolioGeneratorSlice";
 import UpgradeModal from "../../../components/modals/UpgradeModal";

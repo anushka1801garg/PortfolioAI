@@ -6,12 +6,9 @@ import {
   Zap,
   Shield,
   X,
-  Star,
   Crown,
-  Layers,
   CheckCircle2,
-  Lock,
-} from "lucide-react";
+} from 'lucide-react';
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import api from "../../services/api";
@@ -46,8 +43,8 @@ const TIERS = [
     id: "pro",
     name: "Pro Engineer",
     category: "Most Popular",
-    monthlyPrice: 19,
-    annualPrice: 14,
+    monthlyPrice: 499,
+    annualPrice: 375,
     description: "Designed for engineers, designers, and tech talent aiming for top-tier offers.",
     features: [
       "Unlimited Active Portfolios",
@@ -68,8 +65,8 @@ const TIERS = [
     id: "team",
     name: "Team & Studio",
     category: "Organizations",
-    monthlyPrice: 49,
-    annualPrice: 39,
+    monthlyPrice: 999,
+    annualPrice: 749,
     description: "For design agencies, bootcamps, university cohorts, and recruitment teams.",
     features: [
       "Everything included in Pro",
@@ -131,7 +128,7 @@ const UpgradeModal = ({
         await openRazorpayCheckout({
           plan: { id: planId, price: planId === "team" ? 999 : 499 },
           user,
-          onSuccess: (verification) => {
+          onSuccess: () => {
             dispatch(
               updateUserPlan({
                 plan: planId,
@@ -280,7 +277,7 @@ const UpgradeModal = ({
                   {/* Pricing Box */}
                   <div className="py-2 border-y border-zinc-800/80 flex items-baseline gap-1.5">
                     <span className="text-3xl lg:text-4xl font-black text-white tracking-tight">
-                      ${price}
+                      ₹{price.toLocaleString("en-IN")}
                     </span>
                     <span className="text-xs text-zinc-400 font-medium">
                       {tier.id === "free"

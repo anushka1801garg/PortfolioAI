@@ -251,7 +251,7 @@ const AIChatAssistant = ({ portfolioData = null, portfolios = [] }) => {
           htmlUrl: res.data.githubRepo.htmlUrl,
         });
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {

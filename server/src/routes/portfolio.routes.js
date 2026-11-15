@@ -22,14 +22,15 @@ import {
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { aiChatLimiter, aiGenerationLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 
 // Public Portfolio View (No auth required)
 router.get("/public/:id", getPublicPortfolioById);
 
-// AI Portfolio Chat Assistant (Usable across preview and authenticated studio)
-router.post("/chat", chatWithPortfolioAI);
+// AI Portfolio Chat Assistant (Authenticated studio only)
+router.post("/chat", verifyJWT, aiChatLimiter, chatWithPortfolioAI);
 
 // Protected Routes
 router.use(verifyJWT);
@@ -53,7 +54,7 @@ router.post("/duplicate/:id", duplicatePortfolio);
 router.patch("/archive/:id", toggleArchivePortfolio);
 
 // Apply AI Suggestions (Creates version snapshot)
-router.post("/apply-ai/:id", applyAISuggestions);
+router.post("/apply-ai/:id", aiGenerationLimiter, applyAISuggestions);
 
 // Restore Version Snapshot
 router.post("/restore-version/:id/:versionNumber", restoreVersion);

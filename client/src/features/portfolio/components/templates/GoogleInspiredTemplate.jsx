@@ -5,9 +5,7 @@ import {
   ShieldCheck,
   Mail,
   GraduationCap,
-  BookOpen,
   ArrowUpRight,
-  Phone,
   Globe,
   Search,
   Sparkles,
@@ -16,11 +14,10 @@ import {
   X,
   Camera,
   Layers,
-  Copy,
   Zap,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -49,13 +46,11 @@ const GoogleInspiredTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
     website = contact?.website,
     email = contact?.email,
-    phone = contact?.phone,
     title,
   } = portfolio || {};
 
@@ -70,7 +65,7 @@ const GoogleInspiredTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice
 
   // Google Search Bar State
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedChip, setSelectedChip] = useState("ALL");
+  const selectedChip = "ALL";
   const [luckyProject, setLuckyProject] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
 

@@ -16,7 +16,7 @@ export const extractGitHubUsername = (input) => {
   if (!input || typeof input !== "string") return "";
   let str = input.trim();
   str = str.split("?")[0].split("#")[0].replace(/\/+$/, "");
-  const ghRegex = /(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_\-\.]+)/i;
+  const ghRegex = /(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_\-.]+)/i;
   const match = str.match(ghRegex);
   if (match && match[1]) {
     const segment = match[1].replace(/^\/+/, "").replace(/\/+$/, "");

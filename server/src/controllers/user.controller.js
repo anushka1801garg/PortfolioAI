@@ -47,37 +47,51 @@ export const updateUserProfile = async (req, res) => {
       });
     }
 
-    if (fullName !== undefined) {
+    if (typeof fullName === "string") {
       user.fullName = fullName.trim();
     }
-    if (jobTitle !== undefined) {
+    if (typeof jobTitle === "string") {
       user.jobTitle = jobTitle.trim();
     }
-    if (bio !== undefined) {
+    if (typeof bio === "string") {
       user.bio = bio;
     }
-    if (location !== undefined) {
+    if (typeof location === "string") {
       user.location = location.trim();
     }
-    if (phone !== undefined) {
-      user.phone = phone.trim();
+    if (typeof phone === "string") {
+      const trimmedPhone = phone.trim();
+      if (trimmedPhone) {
+        const INDIAN_PHONE_REGEX = /^(?:\+91[\-\s]?)?[6789]\d{9}$/;
+        if (!INDIAN_PHONE_REGEX.test(trimmedPhone)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid phone number format. Please provide a valid 10-digit Indian mobile number (e.g. +91 98765 43210 or 9876543210).",
+          });
+        }
+        user.phone = trimmedPhone;
+      } else {
+        user.phone = "";
+      }
     }
-    if (github !== undefined) {
+    if (typeof github === "string") {
       user.github = github.trim();
     }
-    if (linkedin !== undefined) {
+    if (typeof linkedin === "string") {
       user.linkedin = linkedin.trim();
     }
-    if (website !== undefined) {
+    if (typeof website === "string") {
       user.website = website.trim();
     }
     if (skills !== undefined) {
       user.skills = Array.isArray(skills)
-        ? skills
-        : skills.split(",").map((s) => s.trim()).filter(Boolean);
+        ? skills.filter((s) => typeof s === "string").map((s) => s.trim()).filter(Boolean)
+        : typeof skills === "string"
+        ? skills.split(",").map((s) => s.trim()).filter(Boolean)
+        : user.skills;
     }
-    if (experienceLevel !== undefined) {
-      user.experienceLevel = experienceLevel;
+    if (typeof experienceLevel === "string") {
+      user.experienceLevel = experienceLevel.trim();
     }
 
     if (newPassword) {
@@ -85,6 +99,18 @@ export const updateUserProfile = async (req, res) => {
         return res.status(400).json({
           success: false,
           message: "Current password is required to set a new password",
+        });
+      }
+
+      if (
+        typeof newPassword !== "string" ||
+        newPassword.length < 8 ||
+        !/^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,}$/.test(newPassword)
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "New password must be at least 8 characters long and contain at least one letter and one number",
         });
       }
 
@@ -97,6 +123,7 @@ export const updateUserProfile = async (req, res) => {
       }
 
       user.password = newPassword;
+      user.passwordChangedAt = new Date(Date.now() - 1000);
     }
 
     await user.save();

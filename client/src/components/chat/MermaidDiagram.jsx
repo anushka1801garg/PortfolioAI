@@ -205,7 +205,9 @@ function extractFillColor(element) {
       if (computed && computed.fill && computed.fill !== "none") {
         return computed.fill;
       }
-    } catch (_) {}
+    } catch {
+      // Ignore styles access errors on detached DOM nodes
+    }
   }
 
   return null;
@@ -406,7 +408,7 @@ const MermaidDiagram = ({ code }) => {
             } else {
               setSvgContent(sanitizeSvgString(svg));
             }
-          } catch (_) {
+          } catch {
             setSvgContent(sanitizeSvgString(svg));
           }
         }

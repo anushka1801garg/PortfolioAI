@@ -1,17 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, Activity, Zap, CheckCircle2, Bot } from "lucide-react";
 
-const WelcomeBanner = ({ user }) => {
-  const [greeting, setGreeting] = useState("Welcome back");
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good morning");
-    else if (hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
-  }, []);
+const WelcomeBanner = ({ user }) => {
+  const [greeting] = useState(getGreeting);
 
   const firstName = (user?.fullName || "Developer").split(" ")[0];
   const isPro = user?.plan && user.plan.toLowerCase() !== "free";

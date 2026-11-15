@@ -7,27 +7,22 @@ import {
   Award,
   ShieldCheck,
   Mail,
-  Cpu,
   Activity,
   Play,
   Check,
-  Copy,
-  ChevronRight,
   Monitor,
   CornerDownLeft,
   Camera,
   Sparkles,
   Radio,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
-  SpotlightCard,
   TiltCard,
   ScrollReveal,
   ShimmerText,
-  MagneticButton,
   MagneticPill,
   PulseAura,
   ProjectDeepDiveModal,
@@ -37,7 +32,7 @@ import {
   TerminalBinaryStreamCanvas,
   ExperienceCredentialsBadges,
   DiffThemeBanner,
-} from "./motionComponents";
+} from './motionComponents';
 
 const DeveloperTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) => {
   const [inspectedProject, setInspectedProject] = useState(null);
@@ -52,7 +47,6 @@ const DeveloperTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) =
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
@@ -78,7 +72,7 @@ const DeveloperTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) =
 
   // Live Telemetry & CRT Mode
   const [crtMode, setCrtMode] = useState(true);
-  const [systemUptime, setSystemUptime] = useState("99.98%");
+  const systemUptime = "99.98%";
   const [cpuUsage, setCpuUsage] = useState(14);
   const [copiedKey, setCopiedKey] = useState(null);
   const [selectedTag, setSelectedTag] = useState("ALL");
@@ -127,7 +121,7 @@ const DeveloperTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) =
         response = `STACK MATRIX (${skills.length} packages):\n${skills.map((s, i) => `  [${i + 1}] npm:${s.toLowerCase().replace(/\s+/g, "-")}`).join("\n")}`;
         break;
       case "projects":
-        response = `REPOSITORIES (${projects.length} builds):\n${projects.map((p, i) => `  * ${p.title} -> ${p.impact || p.description?.slice(0, 60)}...`).join("\n")}`;
+        response = `REPOSITORIES (${projects.length} builds):\n${projects.map((p) => `  * ${p.title} -> ${p.impact || p.description?.slice(0, 60)}...`).join("\n")}`;
         break;
       case "bio":
         response = about || "No bio.txt found on root partition.";
@@ -620,13 +614,6 @@ const DeveloperTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) =
 
               <div className="space-y-4">
                 {filteredProjects.map((proj, idx) => {
-                  const projectUrl = proj.live || proj.url || proj.link || proj.github;
-                  const safeProjectUrl = projectUrl
-                    ? projectUrl.startsWith("http")
-                      ? projectUrl
-                      : `https://${projectUrl}`
-                    : null;
-
                   return (
                     <Perspective3DCard
                       key={idx}

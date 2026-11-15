@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 import {
   Globe,
   Mail,
@@ -15,7 +15,6 @@ import {
   ChevronRight,
   Send,
   Layers,
-  Terminal,
   Zap,
   Sliders,
   Copy,
@@ -28,19 +27,17 @@ import {
   Award,
   FileText,
   Eye,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
   TiltCard,
   SpotlightCard,
-  ScrollReveal,
   PulseAura,
-  MagneticButton,
   MagneticPill,
   ProjectDeepDiveModal,
   DocumentViewerModal,
-} from "./motionComponents";
+} from './motionComponents';
 
 const CustomPortfolioTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const [inspectedProject, setInspectedProject] = useState(null);
@@ -82,7 +79,6 @@ const CustomPortfolioTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const primaryColor = customDesign.primaryColor || customLayout.primaryColor || preferences.primaryColor || "#6366f1";
   const secondaryColor = customDesign.secondaryColor || customLayout.secondaryColor || "#a855f7";
   const backgroundColor = customDesign.backgroundColor || customLayout.backgroundColor || "#070709";
-  const cardElevation = customDesign.cardElevation || customLayout.cardElevation || "glow";
   const customPitch = customDesign.customPitch || customLayout.customPitch || preferences.customPitch || "";
   const customCta = customDesign.customCta || customLayout.customCta || preferences.customCta || "Get in Touch";
   const activeSections = customLayout.activeSections || [
@@ -174,11 +170,6 @@ const CustomPortfolioTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
       opacity: 1,
       transition: { staggerChildren: 0.08, delayChildren: 0.1 },
     },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
   };
 
   return (

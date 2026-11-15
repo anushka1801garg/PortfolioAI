@@ -6,9 +6,7 @@ import {
   Code2,
   CheckCircle2,
   Zap,
-  TrendingUp,
-  FileText,
-} from "lucide-react";
+} from 'lucide-react';
 import HeroStats from "./HeroStats";
 
 const HeroContent = () => {

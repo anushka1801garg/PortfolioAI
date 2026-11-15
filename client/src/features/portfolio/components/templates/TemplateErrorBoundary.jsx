@@ -16,8 +16,12 @@ class TemplateErrorBoundary extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.templateKey !== this.props.templateKey && this.state.hasError) {
-      this.setState({ hasError: false, error: null });
+    if (
+      (prevProps.templateKey !== this.props.templateKey ||
+       prevProps.portfolio !== this.props.portfolio) &&
+      this.state.hasError
+    ) {
+      this.setState({ hasError: false, error: null, fallbackMode: false });
     }
   }
 

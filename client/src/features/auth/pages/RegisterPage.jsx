@@ -40,8 +40,13 @@ const RegisterPage = () => {
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,}$/.test(password)) {
+      toast.error("Password must contain at least one letter and one number");
       return;
     }
 
@@ -100,7 +105,7 @@ const RegisterPage = () => {
           label="Password"
           name="password"
           type="password"
-          placeholder="Create a password (min. 6 characters)"
+          placeholder="Min. 8 characters with letter & number"
           value={formData.password}
           onChange={handleChange}
           required

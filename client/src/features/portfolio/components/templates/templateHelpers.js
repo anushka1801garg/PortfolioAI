@@ -8,7 +8,7 @@ export const synthesizeEfficientAbout = (rawAbout = "", options = {}) => {
   if (text.length < 25) return text;
 
   // 2. Identify common section headers used in LinkedIn / Resumes
-  const sectionHeaderRegex = /(?:^|\n)\s*(?:[🚀📌💼🛠️🎯💡🧠📬⭐]\s*)?(What\s*I\s*(?:Build|am\s*doing|Do|have\s*built)|Featured\s*Projects|Projects(?:\s*I've\s*Built)?|How\s*I\s*Think|Coding\s*Profiles|Competitive\s*Programming|Problem\s*Solving|Technical\s*Skills|Tech\s*Stack|Core\s*Competencies|Skills(?:\s*&\s*Tools)?|Tools\s*&\s*Technologies|Career\s*Goals?|Career\s*Objective|Objective|Current\s*Focus|Looking\s*For|Strengths|Core\s*Strengths|Key\s*Strengths|Mindset|My\s*Philosophy|Philosophy|Vision|Approach|Let's\s*Connect|Get\s*in\s*Touch|Contact(?:\s*Me)?|Reach\s*Out|Open\s*to|Education|Work\s*Experience|Experience|Certifications)\b\s*[:—–-]?\s*/gi;
+  const sectionHeaderRegex = /(?:^|\n)\s*(?:(?:🚀|📌|💼|🛠️?|🎯|💡|🧠|📬|⭐)\s*)?(What\s*I\s*(?:Build|am\s*doing|Do|have\s*built)|Featured\s*Projects|Projects(?:\s*I've\s*Built)?|How\s*I\s*Think|Coding\s*Profiles|Competitive\s*Programming|Problem\s*Solving|Technical\s*Skills|Tech\s*Stack|Core\s*Competencies|Skills(?:\s*&\s*Tools)?|Tools\s*&\s*Technologies|Career\s*Goals?|Career\s*Objective|Objective|Current\s*Focus|Looking\s*For|Strengths|Core\s*Strengths|Key\s*Strengths|Mindset|My\s*Philosophy|Philosophy|Vision|Approach|Let's\s*Connect|Get\s*in\s*Touch|Contact(?:\s*Me)?|Reach\s*Out|Open\s*to|Education|Work\s*Experience|Experience|Certifications)\b\s*[:—–-]?\s*/gi;
 
   const sections = [];
   let match;
@@ -21,11 +21,11 @@ export const synthesizeEfficientAbout = (rawAbout = "", options = {}) => {
   }
 
   // 3. Extract Intro (text before the first section header)
-  let intro = "";
+  let intro;
   if (sections.length > 0) {
     intro = text.slice(0, sections[0].index).trim();
   } else {
-    const firstBullet = text.search(/(?:^|\n)\s*[•*📌🔹-]\s*/);
+    const firstBullet = text.search(/(?:^|\n)\s*(?:[•*-]|📌|🔹)\s*/);
     if (firstBullet > 25) {
       intro = text.slice(0, firstBullet).trim();
     } else {
@@ -34,7 +34,7 @@ export const synthesizeEfficientAbout = (rawAbout = "", options = {}) => {
   }
 
   intro = intro
-    .replace(/^[🚀👋👨‍💻👩‍💻💼✨🔥\s]+/, "")
+    .replace(/^(?:👨‍💻|👩‍💻|🚀|👋|💼|✨|🔥|\s)+/u, "")
     .replace(/[\s\r\n]+/g, " ")
     .trim();
 
@@ -55,7 +55,7 @@ export const synthesizeEfficientAbout = (rawAbout = "", options = {}) => {
   }
 
   // 5. Synthesize clean executive bio
-  let efficientAbout = "";
+  let efficientAbout;
 
   if (intro && intro.length >= 30) {
     efficientAbout = intro;
@@ -105,7 +105,7 @@ export const synthesizeEfficientAbout = (rawAbout = "", options = {}) => {
 export const extractAchievementsFromAbout = (aboutText = "") => {
   if (!aboutText || typeof aboutText !== "string") return [];
   const achievements = [];
-  const normalizedText = aboutText.normalize("NFKC").replace(/([🏆🥇🥈🥉🎯💡📌🔹•*])\s*/g, "\n$1 ");
+  const normalizedText = aboutText.normalize("NFKC").replace(/((?:🏆|🥇|🥈|🥉|🎯|💡|📌|🔹|[•*]))\s*/gu, "\n$1 ");
   const lines = normalizedText.split("\n").map((l) => l.trim()).filter(Boolean);
   let inSection = false;
 

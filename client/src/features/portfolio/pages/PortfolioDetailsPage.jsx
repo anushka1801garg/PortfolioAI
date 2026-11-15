@@ -12,11 +12,9 @@ import {
   Cloud,
   History,
   ShieldCheck,
-  ChevronDown,
   Copy,
-  CheckCircle2,
   Camera,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub } from "react-icons/fa";
 
 import {
@@ -42,7 +40,6 @@ const PortfolioDetailsPage = () => {
 
   const { currentPortfolio, loading } = useSelector((state) => state.portfolio);
   const { user } = useSelector((state) => state.auth);
-  const isPro = (user?.plan || "free").toLowerCase() !== "free";
 
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [deployModalMode, setDeployModalMode] = useState("deploy"); // 'deploy' | 'github'
@@ -215,7 +212,7 @@ const PortfolioDetailsPage = () => {
                     toast.success("Theme updated! 🎨");
                     dispatch(fetchPortfolioById(id));
                   }
-                } catch (err) {
+                } catch {
                   toast.dismiss("theme-change");
                   toast.error("Failed to update theme");
                 }

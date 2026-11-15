@@ -5,7 +5,6 @@ import Tilt from "react-parallax-tilt";
 import toast from "react-hot-toast";
 import {
   Sparkles,
-  Zap,
   CheckCircle2,
   ExternalLink,
   Globe,
@@ -27,7 +26,7 @@ import {
   X,
   ArrowLeft,
   TrendingUp,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedinIn, FaTwitter, FaEnvelope } from "react-icons/fa";
 import { SiReact, SiNextdotjs, SiNodedotjs, SiMongodb } from "react-icons/si";
 import CosmicRing from "./CosmicRing";
@@ -119,7 +118,6 @@ const PortfolioPreview = () => {
   const [currentProjectIdx, setCurrentProjectIdx] = useState(0);
   const [projectSubTab, setProjectSubTab] = useState("overview"); // 'overview' | 'terminal' | 'metrics'
   const [copied, setCopied] = useState(false);
-  const [selectedTech, setSelectedTech] = useState(null);
   const [isOpenToWork, setIsOpenToWork] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [starCounts, setStarCounts] = useState({ 1: 342, 2: 518, 3: 890 });
@@ -173,7 +171,7 @@ const PortfolioPreview = () => {
         osc.start();
         osc.stop(ctx.currentTime + 0.25);
       }
-    } catch (e) {
+    } catch {
       // AudioContext policy blocked or disabled
     }
   };
@@ -249,23 +247,6 @@ const PortfolioPreview = () => {
   const handlePrevProject = () => {
     playSound("click");
     setCurrentProjectIdx((prev) => (prev - 1 + projects.length) % projects.length);
-  };
-
-  const handleTechClick = (tech) => {
-    playSound("click");
-    if (selectedTech === tech) {
-      setSelectedTech(null);
-    } else {
-      setSelectedTech(tech);
-      const matchIdx = projects.findIndex((p) => p.tech.includes(tech));
-      if (matchIdx !== -1) {
-        setCurrentProjectIdx(matchIdx);
-      }
-      toast(`Filtered by ${tech} • Project updated ⚡`, {
-        icon: "✨",
-        duration: 1800,
-      });
-    }
   };
 
   const handleStarProject = (projId) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   Search,
   X,
@@ -13,24 +13,18 @@ import {
   Copy,
   Send,
   MessageSquare,
-  Layers,
-  Zap,
   Terminal,
   Volume2,
   VolumeX,
   Palette,
   Bot,
-  Code2,
   ChevronRight,
   Briefcase,
-  Award,
-  GraduationCap,
-  Eye,
   Flame,
   BookOpen,
   Smartphone,
   FileText,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import toast from "react-hot-toast";
 import {
@@ -269,7 +263,6 @@ const InteractivePortfolioOverlay = ({
     skills = [],
     projects = [],
     experience = [],
-    education = [],
     achievements = [],
     certifications = [],
   } = portfolio || {};
@@ -338,6 +331,8 @@ const InteractivePortfolioOverlay = ({
     return () => window.removeEventListener("pointermove", handleMouseMove);
   }, []);
 
+  const scrollToSectionRef = useRef();
+
   // Global project tag click delegator: clicking any '#tag' filters projects dynamically!
   useEffect(() => {
     const handleGlobalClick = (e) => {
@@ -354,7 +349,7 @@ const InteractivePortfolioOverlay = ({
           e.stopPropagation();
           playSoundEffect("pop", soundEnabled);
           onFilterChange?.({ tag: rawTag, query: "" });
-          scrollToSection("projects");
+          scrollToSectionRef.current?.("projects");
           toast.success(`Filtered projects by #${rawTag} 🚀`);
         }
       }
@@ -426,7 +421,7 @@ const InteractivePortfolioOverlay = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = useCallback((sectionId) => {
     playSoundEffect("click", soundEnabled);
     setActiveSection(sectionId);
 
@@ -536,7 +531,10 @@ const InteractivePortfolioOverlay = ({
       setIsContactOpen(true);
       toast.success("Opened Direct Communication Channel! 📬");
     }
-  };
+  }, [soundEnabled]);
+  useEffect(() => {
+    scrollToSectionRef.current = scrollToSection;
+  }, [scrollToSection]);
 
   const handleCopy = (text, fieldLabel) => {
     if (!text) return;
@@ -560,7 +558,7 @@ const InteractivePortfolioOverlay = ({
         });
         toast.success("Shared successfully! 🎉");
         return;
-      } catch (err) {
+      } catch {
         // Fallback to copy
       }
     }

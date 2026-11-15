@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Zap, Shield, CheckCircle2 } from "lucide-react";
+import { Zap, Shield, CheckCircle2 } from 'lucide-react';
 import toast from "react-hot-toast";
 
 import Container from "../../../../components/ui/Container/Container";

@@ -2,23 +2,16 @@ import { useState } from "react";
 import {
   Globe,
   Mail,
-  ExternalLink,
   Award,
-  ShieldCheck,
-  BookOpen,
   GraduationCap,
   Phone,
-  Sparkles,
-  Command,
   Layers,
   ArrowUpRight,
   Briefcase,
   Compass,
   Check,
   Camera,
-  Cpu,
-  Zap,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -49,7 +42,6 @@ const AppleInspiredTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,

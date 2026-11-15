@@ -9,9 +9,7 @@ import {
   Monitor,
   Tablet,
   Smartphone,
-  Sparkles,
-  ExternalLink,
-} from "lucide-react";
+} from 'lucide-react';
 import { TEMPLATES } from "./templateList";
 import TemplateRenderer from "./TemplateRenderer";
 import { demoPortfolioData } from "./demoPortfolioData";

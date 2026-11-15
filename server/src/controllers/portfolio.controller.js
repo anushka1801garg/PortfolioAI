@@ -149,8 +149,47 @@ export const createPortfolio = async (req, res) => {
   }
 };
 
+// Projection fields required for dashboard portfolio cards, stats, and origins (DB-01)
+// Excludes heavy customHtml, rawHtml, analysis reports, and snapshot duplicate trees
+export const PORTFOLIO_LIST_FIELDS = [
+  "title",
+  "slug",
+  "status",
+  "template",
+  "creationType",
+  "creationMode",
+  "inputSource",
+  "tagline",
+  "description",
+  "targetRole",
+  "targetCompany",
+  "views",
+  "updatedAt",
+  "createdAt",
+  "isPublic",
+  "isArchived",
+  "deployedUrl",
+  "deploymentStatus",
+  "deploymentPlatform",
+  "customDomain",
+  "previewImage",
+  "hero.title",
+  "hero.avatar",
+  "skills",
+  "projects.title",
+  "github",
+  "linkedin",
+  "githubRepoUrl",
+  "preferences.customLayout.layoutStyle",
+  "preferences.style",
+  "versions.name",
+  "versions.changeSummary",
+  "versions.createdAt",
+  "versions.versionNumber",
+].join(" ");
+
 // =======================
-// Get All Portfolios (with filtering for archived)
+// Get All Portfolios (with filtering for archived - DB-01 optimized)
 // =======================
 export const getAllPortfolios = async (req, res) => {
   try {
@@ -161,7 +200,10 @@ export const getAllPortfolios = async (req, res) => {
       filter.isArchived = { $ne: true };
     }
 
-    const portfolios = await Portfolio.find(filter).sort({ updatedAt: -1 });
+    const portfolios = await Portfolio.find(filter)
+      .select(PORTFOLIO_LIST_FIELDS)
+      .sort({ updatedAt: -1 })
+      .lean();
 
     return res.status(200).json({
       success: true,

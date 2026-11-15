@@ -7,9 +7,7 @@ import {
   X,
   Check,
   Sparkles,
-  Image as ImageIcon,
-  User,
-} from "lucide-react";
+} from 'lucide-react';
 import toast from "react-hot-toast";
 
 // Helper to resize and compress an image file to a lightweight data URL
@@ -105,7 +103,7 @@ const PhotoUploadModal = ({
       const dataUrl = await compressImageFile(file);
       setPhotoUrl(dataUrl);
       toast.success("Photo loaded! Click 'Apply Photo' to save.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to process image file");
     } finally {
       setIsProcessing(false);
@@ -127,7 +125,7 @@ const PhotoUploadModal = ({
       const dataUrl = await compressImageFile(file);
       setPhotoUrl(dataUrl);
       toast.success("Photo loaded! Click 'Apply Photo' to save.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to process image file");
     } finally {
       setIsProcessing(false);

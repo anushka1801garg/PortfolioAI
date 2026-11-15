@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Cloud,
   Globe,
@@ -46,6 +46,10 @@ const DeploymentModal = ({
 
   // Platform selection: "vercel" (recommended/100% public) | "netlify"
   const [selectedPlatform, setSelectedPlatform] = useState("vercel");
+  const selectedPlatformRef = useRef(selectedPlatform);
+  useEffect(() => {
+    selectedPlatformRef.current = selectedPlatform;
+  }, [selectedPlatform]);
   const [subdomain, setSubdomain] = useState("");
   const [token, setToken] = useState("");
   const [tokenError, setTokenError] = useState("");
@@ -128,9 +132,9 @@ const DeploymentModal = ({
       const cachedVercelToken = localStorage.getItem("portfolioai_vercel_token") || "";
       const cachedGithubToken = localStorage.getItem("portfolioai_github_token") || "";
 
-      if (selectedPlatform === "vercel" && cachedVercelToken) {
+      if (selectedPlatformRef.current === "vercel" && cachedVercelToken) {
         setToken(cachedVercelToken);
-      } else if (selectedPlatform === "netlify" && cachedNetlifyToken) {
+      } else if (selectedPlatformRef.current === "netlify" && cachedNetlifyToken) {
         setToken(cachedNetlifyToken);
       }
 
@@ -238,11 +242,6 @@ const DeploymentModal = ({
     .replace(/[^a-z0-9]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
-
-  const previewLiveUrl =
-    selectedPlatform === "vercel"
-      ? `https://${cleanSubdomain}.vercel.app/`
-      : `https://${cleanSubdomain}.netlify.app/`;
 
   // Step 1: Handle Automated Cloud Deploy via API
   const handleDeploy = async () => {

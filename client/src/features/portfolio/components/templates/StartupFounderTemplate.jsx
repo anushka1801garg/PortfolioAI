@@ -3,26 +3,19 @@ import {
   TrendingUp,
   Zap,
   Target,
-  ExternalLink,
   Mail,
   Award,
-  ShieldCheck,
   GraduationCap,
-  BookOpen,
-  Briefcase,
   Layers,
-  Phone,
   Globe,
   ArrowUpRight,
   Flame,
   Check,
   Sparkles,
   Camera,
-  Copy,
-  Rocket,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -48,14 +41,11 @@ const StartupFounderTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
-    blog = [],
     contact = {},
     title,
   } = portfolio || {};
 
   const email = portfolio?.email || contact?.email;
-  const phone = portfolio?.phone || contact?.phone;
   const linkedin = portfolio?.linkedin || contact?.linkedin;
   const github = portfolio?.github || contact?.github;
   const website = portfolio?.website || contact?.website;

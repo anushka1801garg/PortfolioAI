@@ -9,44 +9,26 @@ import {
   Eye,
   Sliders,
   UploadCloud,
-  CheckCircle,
   FileText,
   Code2,
   Lock,
   Layers,
-  ArrowRight,
-  RefreshCw,
   Award,
-  ShieldCheck,
   Zap,
   Edit3,
-  Bot,
   ArrowLeft,
   Check,
   X,
   Trash2,
   Search,
-  Filter,
-  Compass,
   Briefcase,
   Building2,
-  Wand2,
-  FileCode,
-  Terminal,
-  Layout,
-  CheckSquare,
-  Square,
-  ChevronDown,
-  ChevronUp,
   GraduationCap,
   Plus,
   ExternalLink,
-  Palette,
-  Image as ImageIcon,
-  Link2,
   Upload,
   Camera,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import {
@@ -398,10 +380,13 @@ const PortfolioGenerator = () => {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [previewTemplateModal, setPreviewTemplateModal] = useState(null);
 
   // Generated & Editable Portfolio State
   const [generatedData, setGeneratedData] = useState(null);
+  const generatedDataRef = useRef(generatedData);
+  useEffect(() => {
+    generatedDataRef.current = generatedData;
+  }, [generatedData]);
 
   const [editorNewExp, setEditorNewExp] = useState({
     role: "",
@@ -453,7 +438,7 @@ const PortfolioGenerator = () => {
       return;
     }
 
-    if (location.state?.fromAnalyzer && reduxPortfolio && !generatedData) {
+    if (location.state?.fromAnalyzer && reduxPortfolio && !generatedDataRef.current) {
       const port = reduxPortfolio.portfolio || reduxPortfolio;
       setGeneratedData(port);
       if (port.inputSource) {
@@ -465,7 +450,7 @@ const PortfolioGenerator = () => {
       }
       setMissingInfo(reduxMissingInfo || reduxPortfolio.missingInfo || []);
       setStep("review");
-    } else if (!location.state?.fromAnalyzer && !generatedData && reduxPortfolio) {
+    } else if (!location.state?.fromAnalyzer && !generatedDataRef.current && reduxPortfolio) {
       // Clear any lingering old draft from Redux so clicking AI Studio Builder always opens a fresh creator
       dispatch(clearGeneratedPortfolio());
     }

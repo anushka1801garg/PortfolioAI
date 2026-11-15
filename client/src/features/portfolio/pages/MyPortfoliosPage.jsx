@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   Plus,
@@ -14,7 +14,6 @@ import {
   Copy,
   Archive,
   Cloud,
-  History,
   Download,
   ExternalLink,
   Layers,
@@ -23,10 +22,9 @@ import {
   FileText,
   Sliders,
   LayoutGrid,
-  CheckCircle2,
   ArrowUpRight,
   GitBranch,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import Sidebar from "../../dashboard/components/Sidebar";
@@ -40,7 +38,6 @@ import {
 import { clearGeneratedPortfolio } from "../../../redux/portfolioGenerator/portfolioGeneratorSlice";
 import {
   duplicatePortfolio,
-  toggleArchivePortfolio,
   downloadPortfolioZip,
   downloadPortfolioHtml,
 } from "../services/portfolioService";
@@ -48,11 +45,12 @@ import { downloadATSResume } from "../../../utils/atsResume.util";
 import VersionHistoryModal from "../components/VersionHistoryModal";
 import DeploymentModal from "../components/DeploymentModal";
 import AIChatAssistant from "../../../components/chat/AIChatAssistant";
+import { formatIndianDate, formatRelativeTime } from "../../../utils/date.util";
 
 // ==========================================
 // Origin & Architecture Classifier Helper
 // ==========================================
-export const getPortfolioOrigin = (p) => {
+const getPortfolioOrigin = (p) => {
   // Determine Architecture: Custom Bespoke vs Predefined Template
   const isCustom =
     p.creationType === "custom" ||
@@ -67,7 +65,7 @@ export const getPortfolioOrigin = (p) => {
   const taglineLower = (p.tagline || "").toLowerCase();
   const descLower = (p.description || "").toLowerCase();
 
-  let source = "template";
+  let source;
 
   if (rawSource === "linkedin") {
     source = "linkedin";
@@ -101,7 +99,6 @@ export const getPortfolioOrigin = (p) => {
 
 const MyPortfoliosPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { portfolios = [], loading } = useSelector((state) => state.portfolio);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -154,21 +151,9 @@ const MyPortfoliosPage = () => {
         toast.success("Portfolio duplicated! Ready for role customization ✨");
         dispatch(fetchPortfolios());
       }
-    } catch (err) {
+    } catch {
       toast.dismiss("dup");
       toast.error("Failed to duplicate portfolio");
-    }
-  };
-
-  const handleToggleArchive = async (id) => {
-    try {
-      const res = await toggleArchivePortfolio(id);
-      if (res.data?.success) {
-        toast.success(res.data.message);
-        dispatch(fetchPortfolios());
-      }
-    } catch (err) {
-      toast.error("Failed to update archive status");
     }
   };
 
@@ -406,9 +391,8 @@ const MyPortfoliosPage = () => {
     const snapshotName = currentSnapshot?.name || "Initial Creation";
     const snapshotSummary = currentSnapshot?.changeSummary || snapshotName;
     const snapshotDate = currentSnapshot?.createdAt || portfolio.updatedAt || portfolio.createdAt;
-    const formattedDate = snapshotDate
-      ? new Date(snapshotDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-      : "";
+    const formattedDate = formatIndianDate(snapshotDate);
+    const relativeTime = formatRelativeTime(snapshotDate);
     const snapshotInfo = `${snapshotSummary}${formattedDate ? ` • ${formattedDate}` : ""}`;
 
     const rawCardUrl = portfolio.deployedUrl || "";
@@ -568,10 +552,10 @@ const MyPortfoliosPage = () => {
             <span>Projects: {portfolio.projects?.length || 0}</span>
             <span>Skills: {portfolio.skills?.length || 0}</span>
             <span
-              className="text-zinc-400 font-medium truncate max-w-[140px] text-right"
-              title={snapshotInfo}
+              className="text-zinc-400 font-medium truncate max-w-[150px] text-right"
+              title={`${snapshotInfo}${relativeTime && relativeTime !== formattedDate ? ` (${relativeTime})` : ""}`}
             >
-              {snapshotSummary}
+              {relativeTime ? `Updated ${relativeTime}` : formattedDate || snapshotSummary}
             </span>
           </div>
 

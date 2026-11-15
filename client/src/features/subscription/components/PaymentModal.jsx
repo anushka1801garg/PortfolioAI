@@ -132,7 +132,7 @@ const PaymentModal = ({ isOpen, onClose, plan, user }) => {
         toast.error("Please enter a valid expiry date (MM/YY).");
         return false;
       }
-      const [mm, yy] = expiry.split("/").map(Number);
+      const [mm] = expiry.split("/").map(Number);
       if (!mm || mm < 1 || mm > 12) {
         toast.error("Invalid expiry month.");
         return false;
@@ -237,7 +237,7 @@ const PaymentModal = ({ isOpen, onClose, plan, user }) => {
       const txnId = `TXN_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
 
       // Step 4: Call backend subscription API
-      const result = await subscribeToPlan({
+      await subscribeToPlan({
         plan: (plan.id || plan.title).toLowerCase(),
         amount: Number(plan.price),
         paymentMethod: paymentMethod === "card" ? `Card (${getCardBrand(cardNumber).brand})` : paymentMethod === "upi" ? (upiMode === "qr" ? "UPI (QR Code)" : `UPI (${upiId})`) : `NetBanking (${selectedBank})`,

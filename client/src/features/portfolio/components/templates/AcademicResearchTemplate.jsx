@@ -1,37 +1,26 @@
 import { useState } from "react";
 import {
   BookOpen,
-  GraduationCap,
-  Award,
   ExternalLink,
   Mail,
-  Copy,
   Check,
   FileText,
-  Bookmark,
-  Share2,
   Quote,
-  School,
-  Building2,
   Atom,
-  ChevronDown,
-  ChevronUp,
   Camera,
-  Sparkles,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   TiltCard,
   SpotlightCard,
-  ScrollReveal,
   PulseAura,
   MagneticButton,
   MagneticPill,
   ProjectDeepDiveModal,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const AcademicResearchTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const [inspectedProject, setInspectedProject] = useState(null);
@@ -44,7 +33,6 @@ const AcademicResearchTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
@@ -57,7 +45,6 @@ const AcademicResearchTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const avatar = portfolio?.avatar || portfolio?.hero?.avatar || "";
 
   const [copiedBibId, setCopiedBibId] = useState(null);
-  const [expandedAbstract, setExpandedAbstract] = useState(null);
   const [activeDomain, setActiveDomain] = useState("ALL");
 
   const copyBibTeX = (proj, idx) => {

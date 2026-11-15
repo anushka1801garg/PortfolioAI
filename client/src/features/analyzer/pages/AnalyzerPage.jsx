@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   Globe,
   Code2,
-  FileText,
   Briefcase,
   Sparkles,
   ArrowRight,
@@ -31,14 +30,10 @@ import {
   Palette,
   Layout,
   Award,
-  BookOpen,
-  Layers,
-  CheckSquare,
   Search,
   Clock,
   Maximize2,
-  Minimize2,
-} from "lucide-react";
+} from 'lucide-react';
 
 import Sidebar from "../../dashboard/components/Sidebar";
 import Topbar from "../../dashboard/components/Topbar";
@@ -956,7 +951,7 @@ const AnalyzerPage = () => {
       if (!didReplace && sug.targetItem) {
         const itemTitle = sug.targetItem
           .replace(/^Project:\s*|^Experience:\s*/i, "")
-          .replace(/[↗→🔗]/g, "")
+          .replace(/(?:[↗→]|🔗)/g, "")
           .trim();
 
         if (itemTitle && itemTitle.length >= 3 && modified.includes(itemTitle)) {
@@ -1068,28 +1063,6 @@ const AnalyzerPage = () => {
     (!isThemeSelected || previewViewMode === "before") &&
     !previewTemplateOverride
   );
-
-  // 1-Click Switch Theme
-  const handleQuickSwitchTheme = async (templateId) => {
-    if (activeSource !== "saved" || !selectedPortfolioId) {
-      return toast.error("Please select a portfolio from your library to switch theme directly.");
-    }
-    const effectiveId = selectedPortfolioId;
-    try {
-      toast.loading(`Switching portfolio layout to "${templateId}"...`, { id: "theme-switch" });
-      const res = await dispatch(updatePortfolio({ id: effectiveId, data: { template: templateId } }));
-      toast.dismiss("theme-switch");
-      if (updatePortfolio.fulfilled.match(res)) {
-        toast.success(`Successfully switched theme to "${templateId}"! 🎉`);
-        dispatch(fetchPortfolios());
-      } else {
-        toast.error("Failed to update theme");
-      }
-    } catch (err) {
-      toast.dismiss("theme-switch");
-      toast.error(err.message || "Failed to update theme");
-    }
-  };
 
   // Helper to resolve official issuing certification links
   const getOfficialCertUrl = (cert) => {
@@ -1242,17 +1215,6 @@ const AnalyzerPage = () => {
       toast.dismiss("cert-add");
       toast.error(err.message || "Failed to add certification");
     }
-  };
-
-  // Preview with Recommended Theme
-  const handlePreviewWithTheme = (templateId) => {
-    const themeSug = report?.contentSuggestions?.find((s) => s.field === "template");
-    if (themeSug) {
-      if (!selectedSuggestions.some((s) => s.id === themeSug.id)) {
-        setSelectedSuggestions((prev) => [themeSug, ...prev]);
-      }
-    }
-    setShowPreviewModal(true);
   };
 
   // Open Entire Portfolio on Whole Screen in Dedicated Browser Tab
@@ -1654,47 +1616,6 @@ const AnalyzerPage = () => {
           "Sharpen hero headline to highlight your specialized technical domain within 5 seconds.",
         ];
 
-  const effectiveThemeRec = useMemo(() => {
-    if (report?.themeRecommendation) return report.themeRecommendation;
-    if (isFinanceHRDomain) {
-      return {
-        recommendedTemplateId: "executive",
-        recommendedTemplateName: "Corporate Executive",
-        fitScore: 98,
-        badge: "C-Suite Authority",
-        targetCompanyAffinity: targetCompany
-          ? `Engineered for enterprise corporate governance & financial leadership at ${targetCompany}`
-          : "Tailored for enterprise corporate governance, statutory auditing, and HR leadership",
-        reason:
-          "High-stakes finance, accounts, and human resources decision-makers prioritize understated corporate typography, audit-ready structured tables, and compliance credentials over playful tech portfolios. 'Corporate Executive' establishes institutional trust within 5 seconds.",
-        currentTemplate: selectedPortfolio?.template || "modern",
-        keyUIFeatures: [
-          "Boardroom-ready typography with crisp contrast ratios",
-          "Executive KPI metric cards (% audit efficiency, cost-containment)",
-          "Dual statutory compliance & internal governance registers",
-          "Dedicated institutional credentials & authority dossier",
-        ],
-      };
-    }
-    return {
-      recommendedTemplateId: "minimal",
-      recommendedTemplateName: "Minimal Clean",
-      fitScore: 92,
-      badge: "Clean Architecture",
-      targetCompanyAffinity: targetCompany
-        ? `Optimized for high-signal engineering hiring at ${targetCompany}`
-        : "Engineered for technical precision and fast recruiter scanning",
-      reason:
-        "Technical leads and engineering recruiters value rapid code scanning, clear architecture diagrams, and quantified production deliverables.",
-      currentTemplate: selectedPortfolio?.template || "modern",
-      keyUIFeatures: [
-        "Monospace technical highlights and architecture blocks",
-        "Quantified production impact metric cards",
-        "Direct GitHub & live demo links with zero visual clutter",
-      ],
-    };
-  }, [report?.themeRecommendation, isFinanceHRDomain, targetCompany, selectedPortfolio?.template]);
-
   const effectiveCertRecs = useMemo(() => {
     if (report?.certificationsRecommendation && report.certificationsRecommendation.length > 0) {
       return report.certificationsRecommendation;
@@ -1916,7 +1837,12 @@ const AnalyzerPage = () => {
         officialUrl: "https://www.coursera.org/professional-certificates/meta-back-end-developer",
       },
     ];
-  }, [report?.certificationsRecommendation, report?.domain, isFinanceHRDomain, targetRole, selectedPortfolio]);
+  }, [
+    report,
+    isFinanceHRDomain,
+    targetRole,
+    selectedPortfolio,
+  ]);
 
   const effectiveUISuggestions = useMemo(() => {
     if (report?.uiSuggestions && report.uiSuggestions.length > 0) {
@@ -1973,7 +1899,7 @@ const AnalyzerPage = () => {
         impact: "+18% Recruiter Clarity",
       },
     ];
-  }, [report?.uiSuggestions, isFinanceHRDomain]);
+  }, [report, isFinanceHRDomain]);
 
   return (
     <div className="flex min-h-screen bg-[#0B0E17] text-white">
@@ -2029,11 +1955,13 @@ const AnalyzerPage = () => {
                 <div className="flex flex-col sm:items-end justify-center pt-1">
                   <span className="text-xs text-zinc-400 font-medium">
                     Analyzed on{" "}
-                    {new Date(report.analyzedAt || Date.now()).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {report.analyzedAt
+                      ? new Date(report.analyzedAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "Recently"}
                   </span>
                   <button
                     type="button"

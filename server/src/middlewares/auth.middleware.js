@@ -26,6 +26,26 @@ export const verifyJWT = async (req, res, next) => {
       });
     }
 
+    // Revoke sessions issued prior to the most recent password reset/change
+    if (
+      user.passwordChangedAt &&
+      (typeof decoded.iat !== "number" || !Number.isFinite(decoded.iat))
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Password was recently changed. Please log in again with your new password.",
+        passwordChanged: true,
+      });
+    }
+
+    if (user.changedPasswordAfter && user.changedPasswordAfter(decoded.iat)) {
+      return res.status(401).json({
+        success: false,
+        message: "Password was recently changed. Please log in again with your new password.",
+        passwordChanged: true,
+      });
+    }
+
     req.user = user;
 
     next();

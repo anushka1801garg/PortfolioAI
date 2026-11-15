@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { History, RotateCcw, GitCompare, Check, X, Clock, ShieldAlert } from "lucide-react";
+import { History, RotateCcw, X, Clock } from 'lucide-react';
 import toast from "react-hot-toast";
 import { restoreVersion } from "../services/portfolioService";
+import { formatIndianDate, formatRelativeTime } from "../../../utils/date.util";
 
 const VersionHistoryModal = ({ portfolio, isOpen, onClose, onRestored }) => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [restoring, setRestoring] = useState(false);
-  const [compareMode, setCompareMode] = useState(false);
 
   if (!isOpen || !portfolio) return null;
 
@@ -103,7 +103,8 @@ const VersionHistoryModal = ({ portfolio, isOpen, onClose, onRestored }) => {
                   <p className="text-xs font-medium text-zinc-300 truncate">{ver.changeSummary || "Snapshot recorded"}</p>
                   <p className="text-[10px] text-zinc-500 flex items-center gap-1">
                     <Clock size={10} />
-                    <span>{new Date(ver.createdAt || Date.now()).toLocaleDateString()}</span>
+                    <span>{formatIndianDate(ver.createdAt) || "Recently"}</span>
+                    <span>• {formatRelativeTime(ver.createdAt)}</span>
                     <span>• {ver.changedBy || "User"}</span>
                   </p>
                 </div>

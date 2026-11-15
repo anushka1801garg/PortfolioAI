@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  Settings, 
-  Briefcase, 
-  LogOut, 
-  Search, 
-  Bell, 
-  Plus, 
-  CheckCircle2, 
-  Sparkles, 
-  ShieldCheck, 
-  Globe, 
-  Zap,
-  ExternalLink
-} from "lucide-react";
+import {
+  Settings,
+  Briefcase,
+  LogOut,
+  Search,
+  Bell,
+  Plus,
+  Sparkles,
+  ShieldCheck,
+  Globe,
+  ExternalLink,
+} from 'lucide-react';
 import toast from "react-hot-toast";
 
 import { logout } from "../../../redux/auth/authSlice";

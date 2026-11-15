@@ -92,18 +92,11 @@ const LoginPage = () => {
           onChange={handleChange}
         />
 
-        <div className="mb-6 flex justify-end">
-          <Link
-            to="/forgot-password"
-            className="text-sm text-indigo-400 hover:text-indigo-300"
-          >
-            Forgot Password?
-          </Link>
+        <div className="mt-6">
+          <AuthButton type="submit" disabled={loading}>
+            {loading ? "Logging In..." : "Login"}
+          </AuthButton>
         </div>
-
-        <AuthButton type="submit" disabled={loading}>
-          {loading ? "Logging In..." : "Login"}
-        </AuthButton>
       </form>
 
       <p className="mt-8 text-center text-zinc-400">

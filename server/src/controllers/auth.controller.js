@@ -1,17 +1,42 @@
 import axios from "axios";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 import { encryptToken } from "../utils/crypto.util.js";
 
+// Enforce min 8 characters, at least 1 letter, at least 1 digit, supporting all printable ASCII symbols
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,}$/;
+// Constant-time timing mitigation hash
+const DUMMY_BCRYPT_HASH = "$2b$10$7EqJtq98hPqEX7fNZaFWoO.8k/5pQcM.yZ8s1B4O56W1V9l/6zL3a";
 
 export const registerUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    if (!fullName || !email || !password) {
+    // SEC-04: Strict scalar string type validation against NoSQL injection
+    if (
+      typeof fullName !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid input types: fullName, email, and password must be strings",
+      });
+    }
+
+    if (!fullName.trim() || !email.trim() || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+
+    // SEC-05: Server-side password complexity validation (min 8 chars, 1 letter, 1 number)
+    if (password.length < 8 || !PASSWORD_REGEX.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long and contain at least one letter and one number",
       });
     }
 
@@ -59,7 +84,15 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    // SEC-04: Strict scalar string type validation against NoSQL injection
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password must be strings",
+      });
+    }
+
+    if (!email.trim() || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
@@ -69,10 +102,12 @@ export const loginUser = async (req, res) => {
     const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail }).select("+password");
 
+    // SEC-02: Prevent Account Enumeration: Return identical 401 and execute constant-time comparison
     if (!user) {
-      return res.status(404).json({
+      await bcrypt.compare(password, DUMMY_BCRYPT_HASH).catch(() => { });
+      return res.status(401).json({
         success: false,
-        message: "User not found. Please register first.",
+        message: "Invalid email or password",
       });
     }
 
@@ -81,7 +116,7 @@ export const loginUser = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Invalid email or password",
       });
     }
 

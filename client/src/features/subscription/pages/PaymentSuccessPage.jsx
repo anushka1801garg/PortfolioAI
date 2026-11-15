@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
@@ -9,10 +9,9 @@ import {
   ShieldCheck,
   Check,
   Loader2,
-  FileCheck,
   LayoutDashboard,
   AlertCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import toast from "react-hot-toast";
 
 import { verifyPaymentSession } from "../services/paymentService";
@@ -21,7 +20,6 @@ import { fetchProfile } from "../../../redux/profile/profileSlice";
 
 const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const paymentId =
@@ -35,6 +33,10 @@ const PaymentSuccessPage = () => {
 
   const hasVerified = useRef(false);
   const { user } = useSelector((state) => state.auth);
+  const userEmailRef = useRef(user?.email);
+  useEffect(() => {
+    userEmailRef.current = user?.email;
+  }, [user?.email]);
 
   useEffect(() => {
     if (!paymentId) {
@@ -73,7 +75,7 @@ const PaymentSuccessPage = () => {
               dateStyle: "medium",
               timeStyle: "short",
             }),
-            email: user?.email || "Your account",
+            email: userEmailRef.current || "Your account",
           });
 
           toast.success("🎉 Payment verified! Your Pro Plan is now active!");

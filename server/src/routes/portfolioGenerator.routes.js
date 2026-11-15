@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { aiLimiter } from "../middlewares/rateLimiter.middleware.js";
 import {
   generatePortfolio,
   generateFromData,
@@ -14,11 +15,11 @@ const router = Router();
 
 router.use(verifyJWT);
 
-// Generate from PDF
-router.post("/generate", upload.single("resume"), generatePortfolio);
+// Generate from PDF (AI-intensive)
+router.post("/generate", aiLimiter, upload.single("resume"), generatePortfolio);
 
-// Generate from manual form / JSON / external text
-router.post("/generate-from-data", generateFromData);
+// Generate from manual form / JSON / external text (AI-intensive)
+router.post("/generate-from-data", aiLimiter, generateFromData);
 
 // Fetch public GitHub profile & repositories
 router.get("/github", fetchGitHubProfile);

@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Sparkles, TrendingUp, CheckCircle2, Building2 } from "lucide-react";
 import Container from "../../../../components/ui/Container/Container";
 
 const companies = [

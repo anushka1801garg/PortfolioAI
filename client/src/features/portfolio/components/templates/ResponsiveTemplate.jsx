@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Smartphone,
   Tablet,
@@ -9,7 +9,6 @@ import {
   Phone,
   Briefcase,
   GraduationCap,
-  Layers,
   Sparkles,
   Award,
   ShieldCheck,
@@ -21,19 +20,18 @@ import {
   Copy,
   Check,
   Camera,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
   TiltCard,
   SpotlightCard,
-  ScrollReveal,
   PulseAura,
   MagneticButton,
   MagneticPill,
   ProjectDeepDiveModal,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) => {
   const [inspectedProject, setInspectedProject] = useState(null);
@@ -67,19 +65,24 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
   }, [previewDevice]);
 
   const avatar = portfolio?.avatar || portfolio?.hero?.avatar || "";
-  const displayName = name || title || "Alex Morgan";
-  const initials = displayName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const displayName = String(name || title || "Alex Morgan").trim();
+  const initials =
+    displayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "DEV";
 
   const handleCopyEmail = () => {
     if (!email) return;
-    navigator.clipboard.writeText(email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2200);
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(email).then(() => {
+        setCopiedEmail(true);
+        setTimeout(() => setCopiedEmail(false), 2200);
+      }).catch(() => {});
+    }
   };
 
   // Container width constraint based on simulated device
@@ -101,11 +104,6 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
       opacity: 1,
       transition: { staggerChildren: 0.08, delayChildren: 0.1 },
     },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
   };
 
   return (
@@ -375,12 +373,13 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {skills.map((skill, index) => {
+                {(skills || []).map((skill, index) => {
                   const skillName = typeof skill === "string" ? skill : (skill?.name || skill?.title || "");
+                  if (!skillName?.trim()) return null;
                   return (
                     <MagneticPill key={index}>
                       <span className="px-3.5 py-1.5 rounded-xl bg-zinc-800/90 border border-zinc-700/60 text-zinc-200 text-xs font-semibold hover:border-purple-500/50 hover:bg-purple-600/20 transition cursor-default block">
-                        {skillName}
+                        {skillName.trim()}
                       </span>
                     </MagneticPill>
                   );
@@ -411,7 +410,7 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
                 viewport={{ once: true }}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
-                {projects.map((project, index) => {
+                {(projects || []).filter(Boolean).map((project, index) => {
                   const projectUrl = project.live || project.url || project.link || project.github;
                   const safeProjectUrl = projectUrl
                     ? projectUrl.startsWith("http")
@@ -512,7 +511,7 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
               </h2>
 
               <div className="space-y-4">
-                {experience.map((item, index) => (
+                {(experience || []).filter(Boolean).map((item, index) => (
                   <motion.div
                     key={index}
                     whileHover={{ x: 4 }}
@@ -520,11 +519,11 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
                     className="border-l-2 border-purple-500/40 pl-4 space-y-1"
                   >
                     <div className="flex justify-between items-baseline">
-                      <h3 className="text-sm font-bold text-white">{item.role}</h3>
-                      <span className="text-[11px] font-mono text-zinc-500">{item.duration}</span>
+                      <h3 className="text-sm font-bold text-white">{item.role || item.title || "Role"}</h3>
+                      <span className="text-[11px] font-mono text-zinc-500">{item.duration || item.period || ""}</span>
                     </div>
-                    <p className="text-xs font-semibold text-purple-400">{item.company}</p>
-                    <p className="text-xs text-zinc-400 pt-0.5 leading-relaxed">{item.description}</p>
+                    <p className="text-xs font-semibold text-purple-400">{item.company || ""}</p>
+                    <p className="text-xs text-zinc-400 pt-0.5 leading-relaxed">{item.description || ""}</p>
                     <ExperienceCredentialsBadges exp={item} />
                   </motion.div>
                 ))}
@@ -545,17 +544,17 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
               </h2>
 
               <div className="space-y-4">
-                {education.map((item, index) => (
+                {(education || []).filter(Boolean).map((item, index) => (
                   <motion.div
                     key={index}
                     whileHover={{ y: -3 }}
                     className="rounded-xl bg-zinc-800/40 p-4 space-y-1.5 border border-zinc-800"
                   >
                     <div className="flex justify-between items-baseline">
-                      <h3 className="text-sm font-bold text-white">{item.degree}</h3>
-                      <span className="text-[11px] font-mono text-zinc-500">{item.year}</span>
+                      <h3 className="text-sm font-bold text-white">{item.degree || item.title || "Degree"}</h3>
+                      <span className="text-[11px] font-mono text-zinc-500">{item.year || item.duration || ""}</span>
                     </div>
-                    <p className="text-xs text-purple-300 font-medium">{item.institution}</p>
+                    <p className="text-xs text-purple-300 font-medium">{item.institution || item.school || ""}</p>
                     {item.description && (
                       <p className="text-xs text-zinc-400 pt-0.5">{item.description}</p>
                     )}
@@ -636,7 +635,7 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
                   <span>Verified Credentials</span>
                 </h2>
                 <div className="space-y-3">
-                  {certifications.map((item, idx) => {
+                  {(certifications || []).filter(Boolean).map((item, idx) => {
                     const certUrl = item.link || item.url;
                     return (
                       <motion.div
@@ -688,7 +687,7 @@ const ResponsiveTemplate = ({ portfolio, onEditPhoto, isOwner, previewDevice }) 
               <span>Articles &amp; Thoughts</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {blog.map((post, idx) => (
+              {(blog || []).filter(Boolean).map((post, idx) => (
                 <motion.div
                   key={idx}
                   whileHover={{ y: -4 }}

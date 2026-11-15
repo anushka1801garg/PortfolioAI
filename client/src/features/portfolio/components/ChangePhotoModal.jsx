@@ -5,13 +5,12 @@ import {
   X,
   Upload,
   Link as LinkIcon,
-  User,
   Sparkles,
   Camera,
   Trash2,
   Check,
   RefreshCw,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   uploadPortfolioAvatar,
   updatePortfolio,

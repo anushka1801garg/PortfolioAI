@@ -49,12 +49,12 @@ const TemplateRenderer = ({
   }, []);
 
   const rawPortfolio = portfolio || data || portfolioData;
-  if (!rawPortfolio) return null;
+  const safePortfolio = rawPortfolio || {};
 
-  const github = rawPortfolio.github || rawPortfolio.contact?.github || "";
-  const linkedin = rawPortfolio.linkedin || rawPortfolio.contact?.linkedin || "";
-  const candidateName = rawPortfolio.name || rawPortfolio.hero?.name || rawPortfolio.title || "";
-  const ownerName = rawPortfolio.user?.fullName || "";
+  const github = safePortfolio.github || safePortfolio.contact?.github || "";
+  const linkedin = safePortfolio.linkedin || safePortfolio.contact?.linkedin || "";
+  const candidateName = safePortfolio.name || safePortfolio.hero?.name || safePortfolio.title || "";
+  const ownerName = safePortfolio.user?.fullName || "";
   const isOwner = Boolean(
     isOwnerProp ||
     (ownerName && candidateName && (
@@ -64,24 +64,24 @@ const TemplateRenderer = ({
     ))
   );
 
-  let resolvedAvatar = rawPortfolio.avatar || rawPortfolio.hero?.avatar || "";
+  let resolvedAvatar = safePortfolio.avatar || safePortfolio.hero?.avatar || "";
   // If no avatar is explicitly set, or if isOwner and unavatar was set, prioritize user's real uploaded avatar
-  if (!resolvedAvatar || (isOwner && rawPortfolio.user?.avatar && resolvedAvatar.includes("unavatar.io"))) {
-    if (isOwner && rawPortfolio.user?.avatar) {
-      resolvedAvatar = rawPortfolio.user.avatar;
+  if (!resolvedAvatar || (isOwner && safePortfolio.user?.avatar && resolvedAvatar.includes("unavatar.io"))) {
+    if (isOwner && safePortfolio.user?.avatar) {
+      resolvedAvatar = safePortfolio.user.avatar;
     }
   }
 
   // Prevent owner's avatar leaking onto another candidate's portfolio
-  if (resolvedAvatar && !isOwner && rawPortfolio.user?.avatar && resolvedAvatar === rawPortfolio.user.avatar) {
+  if (resolvedAvatar && !isOwner && safePortfolio.user?.avatar && resolvedAvatar === safePortfolio.user.avatar) {
     resolvedAvatar = "";
   }
 
   if (!resolvedAvatar) {
     const liMatch = linkedin.match(/linkedin\.com\/in\/([a-zA-Z0-9_%-]+)/i);
     const ghMatch = github.match(/(?:github\.com\/|^@?)([a-zA-Z0-9-]+)/i);
-    if (isOwner && rawPortfolio.user?.avatar) {
-      resolvedAvatar = rawPortfolio.user.avatar;
+    if (isOwner && safePortfolio.user?.avatar) {
+      resolvedAvatar = safePortfolio.user.avatar;
     } else if (liMatch && liMatch[1]) {
       const cleanLiSlug = liMatch[1].toLowerCase().replace(/[^a-z0-9_%-]/g, "");
       resolvedAvatar = `https://unavatar.io/linkedin/${cleanLiSlug}`;
@@ -94,18 +94,18 @@ const TemplateRenderer = ({
 
   // Prevent owner's email leaking onto another candidate's portfolio
   const resolvedEmail =
-    rawPortfolio.email ||
-    rawPortfolio.contact?.email ||
-    (isOwner ? (rawPortfolio.user?.email || "") : "");
+    safePortfolio.email ||
+    safePortfolio.contact?.email ||
+    (isOwner ? (safePortfolio.user?.email || "") : "");
 
   // Ensure "about" bio is naturally phrased and efficiently synthesized
-  let resolvedAbout = rawPortfolio.about || "";
+  let resolvedAbout = safePortfolio.about || "";
   if (resolvedAbout) {
     resolvedAbout = synthesizeEfficientAbout(resolvedAbout, { name: candidateName });
   }
 
   // Repair split project titles if necessary
-  const resolvedProjects = (Array.isArray(rawPortfolio.projects) ? rawPortfolio.projects : []).map((proj) => {
+  const resolvedProjects = (Array.isArray(safePortfolio.projects) ? safePortfolio.projects : []).map((proj) => {
     if (!proj || typeof proj !== "object") return proj;
     let title = proj.title || "";
     let description = proj.description || "";
@@ -125,9 +125,9 @@ const TemplateRenderer = ({
   });
 
   // Extract achievements from about if raw list was empty, and normalize schema safely
-  const rawAchievements = Array.isArray(rawPortfolio.achievements) && rawPortfolio.achievements.length > 0
-    ? rawPortfolio.achievements
-    : extractAchievementsFromAbout(rawPortfolio.about || "");
+  const rawAchievements = Array.isArray(safePortfolio.achievements) && safePortfolio.achievements.length > 0
+    ? safePortfolio.achievements
+    : extractAchievementsFromAbout(safePortfolio.about || "");
 
   const resolvedAchievements = (rawAchievements || []).map((item) => {
     if (typeof item === "string") {
@@ -152,10 +152,10 @@ const TemplateRenderer = ({
   }).filter((a) => a.title);
 
   // Normalize skills to clean string arrays to prevent React child rendering errors
-  const rawSkills = Array.isArray(rawPortfolio.skills)
-    ? rawPortfolio.skills
-    : typeof rawPortfolio.skills === "string"
-    ? rawPortfolio.skills.split(",")
+  const rawSkills = Array.isArray(safePortfolio.skills)
+    ? safePortfolio.skills
+    : typeof safePortfolio.skills === "string"
+    ? safePortfolio.skills.split(",")
     : [];
 
   const resolvedSkills = rawSkills
@@ -167,25 +167,25 @@ const TemplateRenderer = ({
     .filter(Boolean);
 
   const resolvedResumeUrl =
-    rawPortfolio.resumeUrl ||
-    rawPortfolio.resume ||
-    rawPortfolio.contact?.resumeUrl ||
-    rawPortfolio.contact?.resume ||
+    safePortfolio.resumeUrl ||
+    safePortfolio.resume ||
+    safePortfolio.contact?.resumeUrl ||
+    safePortfolio.contact?.resume ||
     "";
   const resolvedResumeName =
-    rawPortfolio.resumeName ||
-    rawPortfolio.contact?.resumeName ||
+    safePortfolio.resumeName ||
+    safePortfolio.contact?.resumeName ||
     (candidateName ? `${candidateName}_Resume.pdf` : "Resume.pdf");
 
   const actualPortfolio = {
-    ...rawPortfolio,
+    ...safePortfolio,
     name: candidateName,
     about: resolvedAbout,
     description: resolvedAbout,
     avatar: resolvedAvatar,
     hero: {
-      ...(rawPortfolio.hero || {}),
-      title: rawPortfolio.hero?.title || rawPortfolio.targetRole || (rawPortfolio.title?.includes("(") ? rawPortfolio.title.match(/\(([^)]+)\)/)?.[1] : "") || "Professional",
+      ...(safePortfolio.hero || {}),
+      title: safePortfolio.hero?.title || safePortfolio.targetRole || (safePortfolio.title?.includes("(") ? safePortfolio.title.match(/\(([^)]+)\)/)?.[1] : "") || "Professional",
       name: candidateName,
       avatar: resolvedAvatar,
     },
@@ -195,24 +195,24 @@ const TemplateRenderer = ({
     resumeUrl: resolvedResumeUrl,
     resumeName: resolvedResumeName,
     email: resolvedEmail,
-    phone: rawPortfolio.phone || rawPortfolio.contact?.phone || "",
+    phone: safePortfolio.phone || safePortfolio.contact?.phone || "",
     github,
     linkedin,
-    website: rawPortfolio.website || rawPortfolio.contact?.website || "",
+    website: safePortfolio.website || safePortfolio.contact?.website || "",
     contact: {
       email: resolvedEmail,
-      phone: rawPortfolio.phone || rawPortfolio.contact?.phone || "",
+      phone: safePortfolio.phone || safePortfolio.contact?.phone || "",
       github,
       linkedin,
-      website: rawPortfolio.website || rawPortfolio.contact?.website || "",
+      website: safePortfolio.website || safePortfolio.contact?.website || "",
       resumeUrl: resolvedResumeUrl,
       resumeName: resolvedResumeName,
-      ...(rawPortfolio.contact || {}),
+      ...(safePortfolio.contact || {}),
     },
-    _showDiff: Boolean(rawPortfolio._showDiff),
+    _showDiff: Boolean(safePortfolio._showDiff),
   };
 
-  const originalProjects = actualPortfolio.projects || [];
+  const originalProjects = useMemo(() => actualPortfolio.projects || [], [actualPortfolio.projects]);
 
   const filteredProjects = useMemo(() => {
     return originalProjects.filter((proj) => {
@@ -234,9 +234,11 @@ const TemplateRenderer = ({
     });
   }, [originalProjects, activeTag, searchQuery]);
 
+  if (!rawPortfolio) return null;
+
   const templatePortfolio = {
     ...actualPortfolio,
-    _showDiff: Boolean(rawPortfolio._showDiff),
+    _showDiff: Boolean(safePortfolio._showDiff),
     projects: filteredProjects,
   };
 

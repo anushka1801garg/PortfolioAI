@@ -16,17 +16,12 @@ import {
   Award,
   BookOpen,
   Globe,
-  Mail,
   Phone,
-  ExternalLink,
   ShieldCheck,
   Sparkles,
-  CheckCircle2,
   Eye,
   Sliders,
-  Check,
-  Copy,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import {
@@ -165,7 +160,7 @@ const EditPortfolioPage = () => {
       } else {
         throw new Error(res.payload || "Upload failed");
       }
-    } catch (err) {
+    } catch {
       toast.dismiss("photo-up");
       // Fallback to local Data URL
       const reader = new FileReader();
@@ -215,7 +210,7 @@ const EditPortfolioPage = () => {
       } else {
         throw new Error(res.payload || "Upload failed");
       }
-    } catch (err) {
+    } catch {
       toast.dismiss("res-up");
       // Fallback to Data URL
       const reader = new FileReader();

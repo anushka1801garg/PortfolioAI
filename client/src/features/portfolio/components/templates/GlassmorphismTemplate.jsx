@@ -1,25 +1,19 @@
 import { useState } from "react";
 import {
   Sparkles,
-  ExternalLink,
   Mail,
   ArrowUpRight,
   Award,
-  ShieldCheck,
   GraduationCap,
-  BookOpen,
-  Briefcase,
-  Phone,
   Globe,
   Layers,
   Eye,
   Camera,
   Check,
-  Copy,
   Zap,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   SpotlightCard,
@@ -44,14 +38,11 @@ const GlassmorphismTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
     website = contact?.website,
     email = contact?.email,
-    phone = contact?.phone,
     title,
   } = portfolio || {};
 

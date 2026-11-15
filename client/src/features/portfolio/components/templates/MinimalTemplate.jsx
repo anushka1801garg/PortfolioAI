@@ -1,37 +1,28 @@
 import { useState, useEffect } from "react";
 import {
   ArrowUpRight,
-  Globe,
   Mail,
-  Phone,
-  MapPin,
-  ExternalLink,
   Clock,
   LayoutGrid,
   List,
   Check,
   Camera,
-  Layers,
   Sparkles,
-  Zap,
-} from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+} from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   ScrollReveal,
   TiltCard,
-  ShimmerText,
   MagneticButton,
-  MagneticPill,
   ProjectDeepDiveModal,
   Perspective3DCard,
   InteractiveCursorFollower,
   KineticMarquee,
-  KineticWordReveal,
   ExperienceCredentialsBadges,
   DiffThemeBanner,
-} from "./motionComponents";
+} from './motionComponents';
 
 const MinimalTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const {
@@ -43,19 +34,16 @@ const MinimalTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
     github,
     linkedin,
     website,
     email,
-    phone,
     location,
     title,
     contact = {},
   } = portfolio || {};
 
   const userEmail = email || contact?.email;
-  const userPhone = phone || contact?.phone;
   const userGithub = github || contact?.github;
   const userLinkedin = linkedin || contact?.linkedin;
   const userWebsite = website || contact?.website;

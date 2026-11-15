@@ -1,40 +1,26 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import {
-  Target,
   Sparkles,
   Send,
   Copy,
   Check,
   MessageSquare,
-  Briefcase,
   Building2,
-  TrendingUp,
-  Award,
-  BookOpen,
   ExternalLink,
   ArrowRight,
-  ShieldCheck,
   Eye,
-  Terminal,
   Layers,
-  FileDown,
-  CheckCircle2,
   ChevronRight,
-  Globe,
-  Sliders,
   Download,
-  Users,
   Compass,
   FileText,
-  HelpCircle,
-} from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+} from 'lucide-react';
+import { FaLinkedin } from 'react-icons/fa';
 import { downloadATSResume } from "../../../utils/atsResume.util";
 
-const CareerIntelligenceHub = ({ portfolios = [], loading = false }) => {
+const CareerIntelligenceHub = ({ portfolios = [] }) => {
   const [activeTab, setActiveTab] = useState("targets"); // "targets" | "telemetry" | "interview" | "toolkit"
   const [selectedTarget, setSelectedTarget] = useState(null);
   const [pitchModalOpen, setPitchModalOpen] = useState(false);
@@ -43,10 +29,9 @@ const CareerIntelligenceHub = ({ portfolios = [], loading = false }) => {
   const [copiedLinkIndex, setCopiedLinkIndex] = useState(null);
 
   // Extract authentic candidate data from top portfolio
-  const primaryPortfolio = portfolios[0] || {};
+  const primaryPortfolio = useMemo(() => portfolios[0] || {}, [portfolios]);
   const candidateName = primaryPortfolio.name || primaryPortfolio.hero?.name || "Candidate";
   const primaryRole = primaryPortfolio.targetRole || primaryPortfolio.tagline?.split("|")[0]?.trim() || "Full Stack Engineer";
-  const primaryCompany = primaryPortfolio.targetCompany || "Tier-1 Tech & Startups";
 
   // Derive target opportunities from candidate portfolios
   const targetPipelines = useMemo(() => {

@@ -5,12 +5,10 @@ import {
   Sparkles,
   Star,
   ArrowRight,
-  Award,
   Users,
-  CheckCircle2,
   TrendingUp,
   Zap,
-} from "lucide-react";
+} from 'lucide-react';
 import Container from "../../../../components/ui/Container/Container";
 import Section from "../../../../components/ui/Section/Section";
 import TestimonialCard from "./TestimonialCard";

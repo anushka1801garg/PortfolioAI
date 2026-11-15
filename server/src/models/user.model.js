@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,}$/;
+
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -21,6 +23,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false,
+      validate: {
+        validator: function (v) {
+          if (!v) return false;
+          // Bypass regex if already bcrypt hashed
+          if (v.startsWith("$2a$") || v.startsWith("$2b$")) return true;
+          return PASSWORD_REGEX.test(v);
+        },
+        message: "Password must be at least 8 characters long and contain at least one letter and one number",
+      },
+    },
+
+    passwordChangedAt: {
+      type: Date,
     },
 
     avatar: {
@@ -60,6 +75,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
       trim: true,
+      validate: {
+        validator: function (v) {
+          if (!v) return true;
+          return /^(?:\+91[\-\s]?)?[6789]\d{9}$/.test(v);
+        },
+        message: "Invalid Indian phone number format. Must be a valid 10-digit mobile number.",
+      },
     },
 
     github: {
@@ -125,6 +147,7 @@ const userSchema = new mongoose.Schema(
       transform: function (doc, ret) {
         delete ret.password;
         delete ret.githubAccessToken;
+        delete ret.passwordChangedAt;
         return ret;
       },
     },
@@ -132,6 +155,7 @@ const userSchema = new mongoose.Schema(
       transform: function (doc, ret) {
         delete ret.password;
         delete ret.githubAccessToken;
+        delete ret.passwordChangedAt;
         return ret;
       },
     },
@@ -144,10 +168,27 @@ userSchema.pre("save", async function () {
   }
 
   this.password = await bcrypt.hash(this.password, 10);
+
+  // If modifying password on an existing user, record timestamp 1s in past so immediately issued tokens are valid
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date(Date.now() - 1000);
+  }
 });
 
 userSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
+};
+
+// Returns true if token was issued prior to the most recent password change or lacks a valid iat claim
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    if (typeof JWTTimestamp !== "number" || !Number.isFinite(JWTTimestamp)) {
+      return true;
+    }
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
 };
 
 userSchema.methods.generateAccessToken = function () {

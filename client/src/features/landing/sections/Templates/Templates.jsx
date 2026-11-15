@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -7,12 +6,9 @@ import {
   Palette,
   Smartphone,
   ArrowRight,
-  ExternalLink,
   Sparkles,
   CheckCircle2,
-  Star,
-  Zap,
-} from "lucide-react";
+} from 'lucide-react';
 
 import Container from "../../../../components/ui/Container/Container";
 import Section from "../../../../components/ui/Section/Section";

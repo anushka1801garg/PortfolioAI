@@ -1,38 +1,32 @@
 import { useState } from "react";
 import {
   Cpu,
-  ExternalLink,
   Mail,
   Radio,
   Terminal,
   Award,
-  ShieldAlert,
-  BookOpen,
   ArrowUpRight,
   GraduationCap,
-  Zap,
   Volume2,
   VolumeX,
   Crosshair,
   Check,
   Camera,
   Globe,
-  Lock,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   TiltCard,
   ShimmerText,
   MagneticButton,
-  MagneticPill,
   ScrollReveal,
   PulseAura,
   ProjectDeepDiveModal,
   CyberMatrixRainCanvas,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const CyberpunkTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   const {
@@ -45,13 +39,11 @@ const CyberpunkTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     education = [],
     achievements = [],
     certifications = [],
-    blog = [],
     contact = {},
     title,
   } = portfolio || {};
 
   const email = portfolio?.email || contact?.email;
-  const phone = portfolio?.phone || contact?.phone;
   const github = portfolio?.github || contact?.github;
   const linkedin = portfolio?.linkedin || contact?.linkedin;
   const website = portfolio?.website || contact?.website;
@@ -65,7 +57,6 @@ const CyberpunkTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     .slice(0, 2);
 
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [hudTarget, setHudTarget] = useState("CORE_CPU");
   const [copiedKey, setCopiedKey] = useState(null);
   const [inspectedProject, setInspectedProject] = useState(null);
 

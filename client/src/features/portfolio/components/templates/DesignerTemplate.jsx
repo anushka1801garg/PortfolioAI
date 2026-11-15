@@ -1,15 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 import {
   ExternalLink,
   Mail,
-  ArrowUpRight,
   Briefcase,
-  GraduationCap,
-  Award,
-  ShieldCheck,
   BookOpen,
   Sparkles,
-  Palette,
   Eye,
   Camera,
   Check,
@@ -19,27 +14,19 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  ArrowRight,
-  Compass,
-  RotateCcw,
-  Sliders,
-  Maximize2,
   FileText,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import {
-  SpotlightCard,
   TiltCard,
-  ScrollReveal,
   ShimmerText,
-  MagneticButton,
   MagneticPill,
   PulseAura,
   ProjectDeepDiveModal,
   ExperienceCredentialsBadges,
-} from "./motionComponents";
+} from './motionComponents';
 
 const DESIGNER_PALETTES = {
   ROSE: {
@@ -201,14 +188,10 @@ const DesignerTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     experience = [],
     education = [],
     achievements = [],
-    certifications = [],
-    blog = [],
     contact = {},
     github = contact?.github,
     linkedin = contact?.linkedin,
-    website = contact?.website,
     email = contact?.email,
-    phone = contact?.phone,
     title,
   } = portfolio || {};
 
@@ -276,12 +259,14 @@ const DesignerTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
   }, [TOTAL_CARDS]);
 
   // Jump directly to a card index
-  const goToCard = (index) => {
-    if (index === activeCardIndex) return;
-    playCardSwoosh();
-    setDirection(index > activeCardIndex ? 1 : -1);
-    setActiveCardIndex(index);
-  };
+  const goToCard = useCallback((index) => {
+    setActiveCardIndex((prev) => {
+      if (index === prev) return prev;
+      playCardSwoosh();
+      setDirection(index > prev ? 1 : -1);
+      return index;
+    });
+  }, []);
 
   // Keyboard navigation: ArrowRight / ArrowLeft / Space to flip card
   useEffect(() => {
@@ -317,7 +302,7 @@ const DesignerTemplate = ({ portfolio, onEditPhoto, isOwner }) => {
     };
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
-  }, [activeCardIndex]);
+  }, [goToCard]);
 
   // Smart Card Click handler: triggers transformation unless user clicked an interactive control
   const handleCardClick = (e) => {

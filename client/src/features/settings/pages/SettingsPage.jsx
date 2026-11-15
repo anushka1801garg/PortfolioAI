@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from 'framer-motion';
 import toast from "react-hot-toast";
 import {
   User,
@@ -9,14 +9,12 @@ import {
   Lock,
   LogOut,
   Save,
-  Shield,
   Sparkles,
   Mail,
   Eye,
   EyeOff,
   Check,
   CheckCircle2,
-  Zap,
   Key,
   UploadCloud,
   Briefcase,
@@ -31,21 +29,16 @@ import {
   ShieldCheck,
   BadgeCheck,
   Share2,
-  FileText,
   Layers,
   ArrowRight,
-} from "lucide-react";
+} from 'lucide-react';
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 import Sidebar from "../../dashboard/components/Sidebar";
 import Topbar from "../../dashboard/components/Topbar";
 import WorkspaceBackdrop from "../../../components/layout/WorkspaceBackdrop";
 import PaymentModal from "../../subscription/components/PaymentModal";
-import {
-  updateProfile,
-  uploadAvatar,
-  fetchProfile,
-} from "../../../redux/profile/profileSlice";
+import { updateProfile, uploadAvatar } from '../../../redux/profile/profileSlice';
 import { logout } from "../../../redux/auth/authSlice";
 
 const SUGGESTED_SKILLS = [
@@ -147,7 +140,7 @@ const SettingsPage = () => {
   const getPasswordStrength = (pass) => {
     if (!pass) return { score: 0, text: "", color: "" };
     let score = 0;
-    if (pass.length >= 6) score += 1;
+    if (pass.length >= 8) score += 1;
     if (pass.length >= 10) score += 1;
     if (/[0-9]/.test(pass)) score += 1;
     if (/[^A-Za-z0-9]/.test(pass)) score += 1;
@@ -207,12 +200,22 @@ const SettingsPage = () => {
       return toast.error("Full name cannot be empty.");
     }
 
+    const trimmedPhone = phone.trim();
+    if (trimmedPhone) {
+      const INDIAN_PHONE_REGEX = /^(?:\+91[-\s]?)?[6789]\d{9}$/;
+      if (!INDIAN_PHONE_REGEX.test(trimmedPhone)) {
+        return toast.error(
+          "Please enter a valid 10-digit Indian mobile number (e.g. +91 98765 43210 or 9876543210)."
+        );
+      }
+    }
+
     const payload = {
       fullName: fullName.trim(),
       jobTitle: jobTitle.trim(),
       bio: bio.trim(),
       location: location.trim(),
-      phone: phone.trim(),
+      phone: trimmedPhone,
       experienceLevel,
       github: github.trim(),
       linkedin: linkedin.trim(),
@@ -227,8 +230,11 @@ const SettingsPage = () => {
       if (newPassword !== confirmPassword) {
         return toast.error("New passwords do not match.");
       }
-      if (newPassword.length < 6) {
-        return toast.error("Password must be at least 6 characters long.");
+      if (newPassword.length < 8) {
+        return toast.error("Password must be at least 8 characters long.");
+      }
+      if (!/^(?=.*[A-Za-z])(?=.*\d)[\x20-\x7E]{8,}$/.test(newPassword)) {
+        return toast.error("Password must contain at least one letter and one number.");
       }
       payload.currentPassword = currentPassword;
       payload.newPassword = newPassword;
@@ -555,11 +561,20 @@ const SettingsPage = () => {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full rounded-xl bg-zinc-950/90 border border-zinc-800 pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 outline-none transition"
+                        className={`w-full rounded-xl bg-zinc-950/90 border pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition ${
+                          phone.trim() && !/^(?:\+91[-\s]?)?[6789]\d{9}$/.test(phone.trim())
+                            ? "border-amber-500/70 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30"
+                            : "border-zinc-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40"
+                        }`}
                         placeholder="e.g. +91 98765 43210"
                       />
                       <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                     </div>
+                    {phone.trim() && !/^(?:\+91[-\s]?)?[6789]\d{9}$/.test(phone.trim()) && (
+                      <p className="text-[11px] text-amber-400/90 pl-1">
+                        Must be a valid 10-digit Indian mobile number (e.g. +91 98765 43210 or 9876543210).
+                      </p>
+                    )}
                   </div>
 
                   {/* Location */}
@@ -973,7 +988,7 @@ const SettingsPage = () => {
                         type={showNewPass ? "text" : "password"}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Minimum 6 characters"
+                        placeholder="Minimum 8 characters"
                         className="w-full rounded-xl bg-zinc-950/90 border border-zinc-800 pl-10 pr-10 py-3 text-sm text-white placeholder-zinc-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 outline-none transition"
                       />
                       <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />

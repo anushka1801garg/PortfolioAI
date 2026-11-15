@@ -1,27 +1,20 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { 
-  Sparkles, 
-  Plus, 
-  FileText, 
-  ArrowRight, 
-  Briefcase, 
-  Globe, 
-  ShieldCheck, 
-  Zap, 
-  Compass,
-  CheckCircle2,
+import {
+  Sparkles,
+  ArrowRight,
+  Briefcase,
+  Globe,
+  ShieldCheck,
+  Zap,
   TrendingUp,
-  Layers,
-  Bot,
   Target,
   Eye,
   Check,
-  Copy
-} from "lucide-react";
+  Copy,
+} from 'lucide-react';
 
 import { fetchPortfolios } from "../../../redux/portfolio/portfolioSlice";
 
@@ -32,7 +25,6 @@ import WelcomeBanner from "../components/WelcomeBanner";
 import DashboardCard from "../components/DashboardCard";
 import CareerIntelligenceHub from "../components/CareerIntelligenceHub";
 import AIChatAssistant from "../../../components/chat/AIChatAssistant";
-import CyberBotAvatar from "../../../components/chat/CyberBotAvatar";
 import SEO from "../../../components/common/SEO";
 
 const DashboardPage = () => {
