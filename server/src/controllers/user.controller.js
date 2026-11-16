@@ -206,7 +206,7 @@ export const updateSubscription = async (req, res) => {
       });
     }
 
-    // In production, require checkout verification through Stripe unless demo payments are explicitly allowed
+    // In production, require checkout verification through Razorpay unless demo payments are explicitly allowed
     if (
       process.env.NODE_ENV === "production" &&
       process.env.ALLOW_DEMO_PAYMENTS !== "true" &&
@@ -215,7 +215,7 @@ export const updateSubscription = async (req, res) => {
       return res.status(403).json({
         success: false,
         message:
-          "Direct subscription updates are disabled in production. Please complete checkout through Stripe.",
+          "Direct subscription updates are disabled in production. Please complete checkout through Razorpay.",
       });
     }
 

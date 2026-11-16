@@ -1,5 +1,6 @@
 import express from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { webhookLimiter } from "../middlewares/rateLimiter.middleware.js";
 import {
   getPaymentConfig,
   createRazorpayOrder,
@@ -11,7 +12,7 @@ const router = express.Router();
 
 // Public config & webhook endpoints
 router.get("/config", getPaymentConfig);
-router.post("/webhook", handleRazorpayWebhook);
+router.post("/webhook", webhookLimiter, handleRazorpayWebhook);
 
 // Protected payment endpoints
 router.post("/create-order", verifyJWT, createRazorpayOrder);

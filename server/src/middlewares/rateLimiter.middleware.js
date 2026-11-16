@@ -24,6 +24,12 @@ export const globalLimiter = rateLimit({
     "Too many requests from this IP. Please try again after 15 minutes."
   ),
   skip: (req) => {
+    // Exclude payment webhook from the general client IP limiter so that
+    // Razorpay webhook retries and concurrent events are not throttled.
+    const url = req.originalUrl || req.url || req.path || "";
+    if (url.includes("/payment/webhook")) {
+      return true;
+    }
     // Skip static assets or sitemap/robots if requested
     const path = req.path || "";
     return path.startsWith("/sitemap") || path.startsWith("/robots") || path === "/favicon.ico";
@@ -79,6 +85,17 @@ export const aiGenerationLimiter = rateLimit({
   keyGenerator: aiKeyGenerator,
   handler: createRateLimitHandler(
     "Hourly AI generation limit reached. Please try again in 1 hour."
+  ),
+});
+
+// 6. Payment Webhook Limiter: 1000 requests per 15 minutes per IP (dedicated pool for Razorpay webhooks)
+export const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: createRateLimitHandler(
+    "Too many webhook requests from this IP. Please try again later."
   ),
 });
 

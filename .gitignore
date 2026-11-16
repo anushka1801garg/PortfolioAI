@@ -12,6 +12,13 @@ dist/
 dist-ssr/
 build/
 
+# Uploads & Temporary files
+uploads/
+public/uploads/*
+!public/uploads/.gitkeep
+server/public/uploads/*
+!server/public/uploads/.gitkeep
+
 # Logs
 logs/
 *.log

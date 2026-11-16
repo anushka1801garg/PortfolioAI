@@ -9,54 +9,14 @@ import fs from "fs";
 // =======================
 // Helper: Safe Scrape URL Verification (SSRF Protection)
 // =======================
-export function isSafeUrlForScrape(urlString) {
-  try {
-    const parsed = new URL(urlString);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return false;
-    }
-    const hostname = parsed.hostname.toLowerCase();
-    const cleanHost = hostname.replace(/^\[|\]$/g, "");
-
-    if (
-      cleanHost === "localhost" ||
-      cleanHost.endsWith(".localhost") ||
-      cleanHost.endsWith(".local") ||
-      cleanHost.endsWith(".internal")
-    ) {
-      return false;
-    }
-    if (
-      cleanHost === "169.254.169.254" ||
-      cleanHost === "metadata.google.internal" ||
-      cleanHost === "instance-data"
-    ) {
-      return false;
-    }
-    const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
-    const ipMatch = cleanHost.match(ipv4Regex);
-    if (ipMatch) {
-      const o1 = Number(ipMatch[1]);
-      const o2 = Number(ipMatch[2]);
-      if (o1 === 127 || o1 === 10 || o1 === 0) return false;
-      if (o1 === 169 && o2 === 254) return false;
-      if (o1 === 192 && o2 === 168) return false;
-      if (o1 === 172 && o2 >= 16 && o2 <= 31) return false;
-    }
-    if (
-      cleanHost === "::1" ||
-      cleanHost === "0:0:0:0:0:0:0:1" ||
-      cleanHost.startsWith("fe80:") ||
-      cleanHost.startsWith("fc00:") ||
-      cleanHost.startsWith("fd00:")
-    ) {
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
+export {
+  isPrivateIp,
+  isSafeUrlForScrape,
+  isValidLinkedInUrl,
+  createPinnedLookup,
+  resolveAndValidateUrl,
+  safeAxiosGet,
+} from "../utils/ssrfValidator.js";
 
 // =======================
 // Helper: Resolve Accessible User IDs (Safely unifies developer alias accounts)
@@ -2632,7 +2592,7 @@ export const chatWithPortfolioAI = async (req, res) => {
         try {
           const dbP = await Portfolio.findById(idMatch[1]).populate(
             "user",
-            "fullName email avatar",
+            "fullName avatar",
           );
           if (dbP) {
             targetPortfolio = dbP.toObject();
@@ -2651,7 +2611,7 @@ export const chatWithPortfolioAI = async (req, res) => {
         try {
           const dbP = await Portfolio.findOne({
             deployedUrl: { $regex: subdomain, $options: "i" },
-          }).populate("user", "fullName email avatar");
+          }).populate("user", "fullName avatar");
           if (dbP) {
             targetPortfolio = dbP.toObject();
           }
@@ -2663,7 +2623,7 @@ export const chatWithPortfolioAI = async (req, res) => {
       // If a live URL was provided but not found in MongoDB, scrape the live site directly (with SSRF protection)
       if (!targetPortfolio && detectedUrl && !detectedUrl.includes("github.com") && isSafeUrlForScrape(detectedUrl)) {
         try {
-          const liveRes = await axios.get(detectedUrl, {
+          const liveRes = await safeAxiosGet(detectedUrl, {
             headers: {
               "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 PortfolioAI/2.0",
@@ -2971,7 +2931,7 @@ export const getPublicPortfolioById = async (req, res) => {
     if (rawId && /^[0-9a-fA-F]{24}$/.test(rawId)) {
       portfolio = await Portfolio.findById(rawId).populate(
         "user",
-        "fullName avatar email plan",
+        "fullName avatar plan",
       );
     }
 
@@ -2987,7 +2947,7 @@ export const getPublicPortfolioById = async (req, res) => {
           { name: { $regex: `^${safeId}$`, $options: "i" } },
           { title: { $regex: `^${safeId}$`, $options: "i" } },
         ],
-      }).populate("user", "fullName avatar email plan");
+      }).populate("user", "fullName avatar plan");
     }
 
     if (!portfolio || !portfolio.isPublic || portfolio.status !== "Published") {

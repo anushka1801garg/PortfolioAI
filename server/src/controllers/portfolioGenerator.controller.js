@@ -12,7 +12,7 @@ import {
   extractAchievementsFromAbout,
 } from "../services/portfolioGenerator.service.js";
 import { scrapeLinkedInProfile } from "../services/linkedinScraper.service.js";
-import { isSafeUrlForScrape } from "./portfolio.controller.js";
+import { isSafeUrlForScrape, isValidLinkedInUrl, safeAxiosGet } from "./portfolio.controller.js";
 
 const safeUnlink = (filePath) => {
   if (!filePath) return;
@@ -160,6 +160,14 @@ export const generateFromData = async (req, res) => {
     let gitHubProfileData = null;
 
     if (inputSource === "linkedin" && typeof rawData === "object") {
+      // Reject malformed, non-HTTPS, or SSRF-probing LinkedIn URLs
+      if (rawData.linkedinUrl && !isValidLinkedInUrl(rawData.linkedinUrl)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid LinkedIn URL. Please provide a valid HTTPS URL on linkedin.com (e.g. https://www.linkedin.com/in/username).",
+        });
+      }
+
       const slugMatch = (rawData.linkedinUrl || "").match(/linkedin\.com\/in\/([a-zA-Z0-9_%-]+)/i);
       const cleanSlug = slugMatch ? slugMatch[1].toLowerCase().replace(/[^a-z0-9_%-]/g, "") : "";
 
@@ -225,7 +233,7 @@ export const generateFromData = async (req, res) => {
 
       // 1. Dual-Provider Live Scraper Check (Apify & RapidAPI)
       liveScrapeResult = null;
-      if (rawData.linkedinUrl) {
+      if (rawData.linkedinUrl && isValidLinkedInUrl(rawData.linkedinUrl)) {
         try {
           liveScrapeResult = await scrapeLinkedInProfile(rawData.linkedinUrl);
         } catch (scrapeErr) {
@@ -293,23 +301,20 @@ export const generateFromData = async (req, res) => {
         combined += `\n\nPROFILE DETAILS & RESUME DATA:\n${rawData.linkedinText.trim()}`;
       }
 
-      // 3. Public metadata fallback
+      // 3. Public metadata fallback (Secured with safeAxiosGet and strict LinkedIn validation)
       if (
         rawData.linkedinUrl &&
         !liveScrapeResult?.success &&
-        isSafeUrlForScrape(rawData.linkedinUrl) &&
-        /linkedin\.com/i.test(rawData.linkedinUrl)
+        isValidLinkedInUrl(rawData.linkedinUrl)
       ) {
         try {
-          const fetchRes = await axios.get(rawData.linkedinUrl, {
+          const fetchRes = await safeAxiosGet(rawData.linkedinUrl, {
             headers: {
               "User-Agent": "Twitterbot/1.0",
               Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
               "Accept-Language": "en-US,en;q=0.9",
             },
             timeout: 6000,
-            signal: AbortSignal.timeout(6000),
-            validateStatus: () => true,
           });
           if (fetchRes.status === 200 && typeof fetchRes.data === "string") {
             const html = fetchRes.data;
@@ -725,10 +730,21 @@ export const extractPortfolioUrl = async (req, res) => {
         message: "Target URL cannot be a loopback, private subnet, or internal cloud metadata address.",
       });
     }
-    const response = await axios.get(targetUrl, {
-      timeout: 8000,
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
-    });
+    let response;
+    try {
+      response = await safeAxiosGet(targetUrl, {
+        timeout: 8000,
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
+      });
+    } catch (fetchErr) {
+      if (fetchErr.isSsrfBlocked || fetchErr.message?.startsWith("SSRF_")) {
+        return res.status(400).json({
+          success: false,
+          message: "Target URL cannot be a loopback, private subnet, or internal cloud metadata address.",
+        });
+      }
+      throw fetchErr;
+    }
 
     const html = response.data || "";
     const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
@@ -929,7 +945,7 @@ Extract the design aesthetic and return ONLY a valid JSON object (no markdown, n
 
       let html = "";
       try {
-        const fetchRes = await axios.get(formattedUrl, {
+        const fetchRes = await safeAxiosGet(formattedUrl, {
           timeout: 7000,
           maxContentLength: 5 * 1024 * 1024,
           maxBodyLength: 5 * 1024 * 1024,

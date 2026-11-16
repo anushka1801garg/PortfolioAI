@@ -131,6 +131,7 @@ const userSchema = new mongoose.Schema(
 
     paymentHistory: [
       {
+        orderId: { type: String, default: "" },
         plan: String,
         amount: Number,
         currency: { type: String, default: "INR" },

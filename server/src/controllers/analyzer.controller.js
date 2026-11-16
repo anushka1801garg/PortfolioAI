@@ -1,12 +1,11 @@
 import fs from "fs";
-import axios from "axios";
 import { extractTextFromPDF } from "../services/pdf.service.js";
 import {
   analyzeResumeWithGemini,
   analyzePortfolioComprehensive,
 } from "../services/gemini.service.js";
 import Portfolio from "../models/portfolio.model.js";
-import { isSafeUrlForScrape } from "./portfolio.controller.js";
+import { isSafeUrlForScrape, safeAxiosGet } from "./portfolio.controller.js";
 
 // =======================
 // Analyze Resume PDF
@@ -171,19 +170,30 @@ export const analyzeUrl = async (req, res) => {
         message: "Target URL cannot be a loopback, private subnet, or internal cloud metadata address.",
       });
     }
-    const siteResponse = await axios.get(targetUrl, {
-      timeout: 10000,
-      maxContentLength: 5 * 1024 * 1024,
-      maxBodyLength: 5 * 1024 * 1024,
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
-    });
+    let siteResponse;
+    try {
+      siteResponse = await safeAxiosGet(targetUrl, {
+        timeout: 10000,
+        maxContentLength: 5 * 1024 * 1024,
+        maxBodyLength: 5 * 1024 * 1024,
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
+      });
+    } catch (fetchErr) {
+      if (fetchErr.isSsrfBlocked || fetchErr.message?.startsWith("SSRF_")) {
+        return res.status(400).json({
+          success: false,
+          message: "Target URL cannot be a loopback, private subnet, or internal cloud metadata address.",
+        });
+      }
+      throw fetchErr;
+    }
 
     const html = siteResponse.data || "";
 
     // 1. Extract metadata from HTML
     const pageTitle = (html.match(/<title[^>]*>([^<]+)<\/title>/i) || [])[1]?.trim() || "";
     const metaDesc = (html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i) || [])[1]?.trim() || "";
-    
+
     // Extract candidate name and detected role from title (e.g. "Chinky | Full-Stack Developer & CS Undergraduate")
     let candidateName = "";
     let detectedRoleFromPage = "";
@@ -234,11 +244,11 @@ export const analyzeUrl = async (req, res) => {
     // Extract avatar / profile photo
     let detectedAvatar = "";
     const ogImg = (html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
-                   html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i) || [])[1];
+      html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i) || [])[1];
     if (ogImg) {
       try {
         detectedAvatar = ogImg.startsWith("http") ? ogImg : new URL(ogImg, targetUrl).href;
-      } catch (_) {}
+      } catch (_) { }
     }
     if (!detectedAvatar) {
       const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
@@ -254,7 +264,7 @@ export const analyzeUrl = async (req, res) => {
           try {
             detectedAvatar = src.startsWith("http") ? src : new URL(src, targetUrl).href;
             break;
-          } catch (_) {}
+          } catch (_) { }
         }
       }
     }
@@ -439,7 +449,7 @@ export const fetchRawHtml = async (req, res) => {
         message: "Target URL cannot be a loopback, private subnet, or internal cloud metadata address.",
       });
     }
-    const response = await axios.get(url, {
+    const response = await safeAxiosGet(url, {
       timeout: 10000,
       maxContentLength: 5 * 1024 * 1024,
       maxBodyLength: 5 * 1024 * 1024,
